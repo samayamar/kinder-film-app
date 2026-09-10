@@ -41,7 +41,6 @@ interface StreamingData {
 
 export default function Home() {
   const { saveAnalysis } = useAnalysisStorage();
-  const resultRef = useRef<HTMLDivElement>(null);
   const [age, setAge] = useState(7);
   const [filmName, setFilmName] = useState("");
   const [properties, setProperties] = useState<string[]>([]);
@@ -52,10 +51,10 @@ export default function Home() {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
 
-  // Scroll nach oben wenn Ergebnis fertig ist
+  // Scroll nach ganz oben wenn Ergebnis fertig ist
   useEffect(() => {
-    if (result && resultRef.current) {
-      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (result) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [result]);
 
@@ -147,21 +146,26 @@ export default function Home() {
             {/* LOADING BAR */}
             {loading && (
               <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                <div className="mb-4">
-                  <div className="inline-block text-5xl">
-                    <span className="inline-block" style={{ animation: "clap 0.6s infinite" }}>🎬</span>
-                  </div>
+                <div className="mb-6 flex justify-center">
+                  <style>{`
+                    @keyframes clapboard {
+                      0% { transform: rotateY(0deg); }
+                      50% { transform: rotateY(90deg); }
+                      100% { transform: rotateY(0deg); }
+                    }
+                    .clapboard {
+                      display: inline-block;
+                      font-size: 60px;
+                      animation: clapboard 0.8s ease-in-out infinite;
+                      transform-style: preserve-3d;
+                    }
+                  `}</style>
+                  <div className="clapboard">🎬</div>
                 </div>
                 <p className="text-gray-700 font-semibold mb-4">Analysiere "{filmName}"...</p>
                 <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                   <div className="bg-indigo-600 h-full animate-pulse rounded-full"></div>
                 </div>
-                <style>{`
-                  @keyframes clap {
-                    0%, 100% { transform: scaleX(1); }
-                    50% { transform: scaleX(-1); }
-                  }
-                `}</style>
               </div>
             )}
           </>
@@ -169,7 +173,7 @@ export default function Home() {
 
         {/* ERGEBNIS - WENN FERTIG */}
         {result && (
-          <div ref={resultRef} className="space-y-6">
+          <div className="space-y-6">
             {/* HAUPTERGEBNIS */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex justify-between items-start mb-4">
