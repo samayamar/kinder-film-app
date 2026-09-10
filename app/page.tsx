@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import Header from "@/components/Header";
+import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import AnalysisForm from "@/components/AnalysisForm";
 import ScoresTable from "@/components/ScoresTable";
 import RecommendationCard from "@/components/RecommendationCard";
@@ -91,6 +90,16 @@ export default function Home() {
     }
   };
 
+  const handleNewAnalysis = () => {
+    setResult(null);
+    setTrailerData(null);
+    setStreamingData(null);
+    setError("");
+    setAge(7);
+    setFilmName("");
+    setProperties([]);
+  };
+
   const loadExtras = async (film: string) => {
     try {
       const [trailerRes, streamingRes] = await Promise.all([
@@ -108,20 +117,45 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      <Header />
+      <Header showNewAnalysisLink={result !== null} />
 
       <div className="max-w-3xl mx-auto p-4 md:p-8">
-        {/* LINK ZU GESPEICHERTEN ANALYSEN */}
-        <div className="mb-6 text-center">
-          <Link href="/favorites" className="text-indigo-600 hover:text-indigo-800 font-semibold text-sm">
-            📚 Meine gespeicherten Filmanalysen
-          </Link>
-        </div>
+        {/* ANALYSIEREN FORM - NUR WENN KEIN ERGEBNIS */}
+        {!result && (
+          <>
+            <AnalysisForm 
+              age={age} 
+              setAge={setAge} 
+              filmName={filmName} 
+              setFilmName={setFilmName} 
+              properties={properties} 
+              setProperties={setProperties} 
+              loading={loading} 
+              onSubmit={handleAnalyze} 
+            />
 
-        <AnalysisForm age={age} setAge={setAge} filmName={filmName} setFilmName={setFilmName} properties={properties} setProperties={setProperties} loading={loading} onSubmit={handleAnalyze} />
+            {error && <div className="bg-red-100 text-red-800 p-4 rounded mb-8">{error}</div>}
 
-        {error && <div className="bg-red-100 text-red-800 p-4 rounded mb-8">{error}</div>}
+            {/* LOADING BAR */}
+            {loading && (
+              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+                <div className="mb-4">
+                  <div className="inline-block">
+                    <div className="animate-spin">
+                      <span className="text-5xl">🎬</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-700 font-semibold mb-4">Analysiere "{filmName}"...</p>
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div className="bg-indigo-600 h-full animate-pulse rounded-full"></div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
 
+        {/* ERGEBNIS - WENN FERTIG */}
         {result && (
           <div className="space-y-6">
             {/* HAUPTERGEBNIS */}
@@ -139,8 +173,11 @@ export default function Home() {
               <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-indigo-500 mb-4">
                 <p className="text-gray-700 text-sm">{result.begruendung}</p>
               </div>
-              <button onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }} className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700">
-                {saved ? "✓ Gespeichert" : "💾 Speichern"}
+              <button 
+                onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }} 
+                className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700"
+              >
+                {saved ? "✓ Zu Favoriten hinzugefügt" : "⭐ Zu Favoriten hinzufügen"}
               </button>
             </div>
 
