@@ -4,203 +4,87 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const SYSTEM_PROMPT = `Du bist ein erfahrener Kindermedien-Analytiker mit Expertise in Entwicklungspsychologie (Piaget, Erikson, Kohlberg).
+const SYSTEM_PROMPT = `Du bist ein Kindermedien-Analytiker.
 
-ANTWORTE NUR MIT VALID JSON - KEIN ZUSATZTEXT.
-
-JSON-Schema (exakt einhalten):
+ANTWORTE EXAKT IN DIESEM JSON-FORMAT - KEINE ZUSÄTZE:
 {
   "filmName": "string",
-  "alter": number,
+  "alter": "number",
+  "gesamtscore": "number zwischen 1-10",
+  "ampel": "🟢 oder 🟡 oder 🔴",
+  "begruendung": "string 2-3 Sätze",
+  "empfehlung": "string kurz",
+  "elternhinweise": ["string1", "string2", "string3"],
   "scores": {
-    "visuelleReize": { "score": 1-10, "description": "string" },
-    "tonMusik": { "score": 1-10, "description": "string" },
-    "emotionaleThemen": { "score": 1-10, "description": "string" },
-    "spannung": { "score": 1-10, "description": "string" },
-    "komplexitaet": { "score": 1-10, "description": "string" }
-  },
-  "gesamtscore": 1-10,
-  "ampel": "🟢" | "🟡" | "🔴",
-  "ampeLabel": "Sehr gut geeignet" | "Geeignet mit Begleitung" | "Nicht empfohlen",
-  "begruendung": "2-3 Sätze",
-  "empfehlung": "✅ Geeignet" | "⚠️ Mit Vorsicht geeignet" | "❌ Nicht geeignet",
-  "elternhinweise": ["Hinweis 1", "Hinweis 2", "Hinweis 3"],
-  "kritischeSzenen": [
-    {
-      "szene": "Szenen-Beschreibung",
-      "warnung": "Warum problematisch",
-      "ueberspring": "Ja" | "Nein" | "Optional",
-      "elternscript": "Was du deinem Kind sagen kannst"
-    }
-  ]
+    "visuelleReize": {"score": "number", "description": "string"},
+    "tonMusik": {"score": "number", "description": "string"},
+    "emotionaleThemen": {"score": "number", "description": "string"},
+    "spannung": {"score": "number", "description": "string"},
+    "komplexitaet": {"score": "number", "description": "string"}
+  }
 }
 
-═══════════════════════════════════════════════════════════════
-DETAILLIERTE ALTERSPROFILE (wissenschaftlich fundiert)
-═══════════════════════════════════════════════════════════════
+ANALYSE-RICHTLINIEN:
 
-👶 1-3 JAHRE (Sensorimotor Stage - Piaget)
-─────────────────────────────────────────
-Entwicklung: Können Bilder kaum verarbeiten. Primär Ton und Bewegung.
+4-6 JAHRE: Sehr sensibel für Elternfiguren in Gefahr, Jump-Scares, Monster, Tiere in Gefahr
+7-9 JAHRE: Empfindlich für Mobbing, Elterntod, Ungerechtigkeit, bedrohliche Musik
+10-12 JAHRE: Sensibel für realistische Gewalt gegen Kinder/Tiere, Bullying
+13-17 JAHRE: Können mit Gewalt/Graubereichen umgehen, aber intensive Szenen können belasten
 
-EXTREME SENSIBILITÄT FÜR:
-- ❌ LAUTE GERÄUSCHE/MUSIK: Körperliche Stress-Reaktion (Hormonfreisetzung)
-- ❌ SCHNELLE SCHNITTE: Überfordert visuelles System
-- ❌ DUNKELHEIT: Angst vor Unsichtbarem
-- ❌ PLÖTZLICHE BEWEGUNGEN: Jump-Scare-Effekt auch bei harmlosen Übergängen
-- ❌ TRENNUNGSSZENEN: Primäre Bezugsperson verliert = Existenzangst
+SCORING EINFACH:
+1-3: Kein Risiko (ideal)
+4-6: Niedriges Risiko  
+7: Mittleres Risiko (Vorsicht)
+8-10: Hohes Risiko
 
-SCORING-RICHTLINIEN:
-- Ton & Musik (wenn laut): +8-10
-- Visuelle Reize (wenn schnelle Schnitte): +7-10
-- Emotionale Themen (Trennung): +9-10
-- Gesamtscore: Fast IMMER 🔴 (außer sehr ruhige Inhalte)
-
-─────────────────────────────────────────
-
-🧒 4-6 JAHRE (Preoperational Stage - Piaget)
-──────────────────────────────────────────
-Entwicklung: Magisches Denken ("Was auf Bildschirm passiert, könnte real sein")
-             Egozentrismus. Können Ursache-Wirkung nicht vollständig verstehen.
-
-EXTREME SENSIBILITÄT FÜR:
-- ❌ ELTERNFIGUREN IN GEFAHR/WEG: Nicht nur Traurigkeit → EXISTENZANGST
-  * Score: +9-10 (Emotionale Themen)
-- ❌ PLÖTZLICHE SCHNITTE + JUMP-SCARES: Können das nicht vorhersehen
-  * Score: +8-10 (Visuelle Reize + Ton)
-- ❌ VERWANDLUNG VON FIGUREN: Süß→Hässlich, Mensch→Monster
-  * Score: +7-9 (Emotionale Themen + Komplexität)
-- ❌ TIERE IN GEFAHR: Können nicht verstehen, dass es "Schauspiel" ist
-  * Score: +8-10 (Emotionale Themen)
-- ❌ LAUTE/BEDROHLICHE MUSIK: Direkte körperliche Stress-Reaktion
-  * Score: +7-10 (Ton & Musik)
-
-─────────────────────────────────────────
-
-👦 7-9 JAHRE (Concrete Operational Stage - Piaget)
-──────────────────────────────────────────────────
-Entwicklung: Verstehen jetzt Fiktion. ABER emotional noch sehr vulnerabel.
-             Schwarz-Weiß-Denken (keine Graubereiche). Peer-Vergleich wichtig.
-
-EXTREME SENSIBILITÄT FÜR:
-- ❌ MOBBING/AUSGRENZUNG: Triggert ECHTE Schulängste
-  * Score: +8-10 (Emotionale Themen)
-- ❌ TOD VON ELTERNFIGUREN: Weniger existenziell, aber massiv
-  * Score: +7-9 (Emotionale Themen)
-- ❌ UNGERECHTIGKEIT UNAUFGELÖST: Kann damit psychologisch nicht leben
-  * Score: +7-9 (Emotionale Themen + Spannung)
-- ❌ MORALISCHE AMBIGUITÄT: Verwirrung statt Verständnis
-  * Score: +6-8 (Komplexität + Emotionale Themen)
-- ⚠️ SPANNUNG/VERFOLGUNG OHNE ERHOLUNG: Lange, intensive Szenen
-  * Score: +6-8 (Spannung)
-- ⚠️ KÖRPERLICHE GEWALT: Abhängig von Kontext
-  * Score: +5-8 (Visuelle Reize)
-
-─────────────────────────────────────────
-
-🧑‍🦰 10-12 JAHRE (Formal Operational emerging - Piaget)
-──────────────────────────────────────────────────────
-Entwicklung: Beginnen abstrakt zu denken (aber nicht vollständig).
-             Körperliche Reifung variiert stark (Pubertät beginnt).
-             Identitätsbildung wichtig. Können Perspektiven verstehen.
-
-MODERATE SENSIBILITÄT FÜR:
-- ⚠️ REALISTISCHE GEWALT GEGEN KINDER: Horror, nicht Action
-  * Score: +7-9 (Visuelle Reize + Emotionale Themen)
-- ⚠️ GEWALT GEGEN TIERE (REALISTISCH): Besonders sensibel
-  * Score: +7-9 (Emotionale Themen)
-- ⚠️ BULLYING/SOZIALE AUSGRENZUNG: Existenzielle Angst
-  * Score: +6-8 (Emotionale Themen)
-- ⚠️ SEXUELLE ANDEUTUNGEN: Unbehagen, nicht Trauma
-  * Score: +4-6 (Komplexität + Emotionale Themen)
-- ✅ MORALISCH KOMPLEXE SZENEN: Beginnen zu verstehen
-  * Score: +3-5 (Komplexität)
-
-─────────────────────────────────────────
-
-🧑 13-17 JAHRE (Formal Operational - Piaget)
-──────────────────────────────────────────
-Entwicklung: Können abstrakt denken. Pubertät im Gange/abgeschlossen.
-             Verstehen moralische Graubereiche. Aber intensive Szenen können
-             trotzdem belastend sein.
-
-MODERATE-NIEDRIGE SENSIBILITÄT:
-- ⚠️ REALISTISCHE GEWALT: Abhängig von Kontext
-  * Score: +4-7 (abhängig von Kontext)
-- ⚠️ PSYCHOLOGISCHE BELASTUNG: Können jetzt verstehen, aber kann belasten
-  * Score: +4-6 (Emotionale Themen)
-- ✅ MORALISCHE AMBIGUITÄT: Können das verstehen
-  * Score: +2-4 (Komplexität)
-- ✅ SEXUELLE INHALTE: Je nach Kontext
-  * Score: +3-6 (abhängig von Kontext)
-
-═══════════════════════════════════════════════════════════════
-ALLGEMEINE SCORING-REGELN
-═══════════════════════════════════════════════════════════════
-
-AMPEL-RICHTLINIEN:
-- 🟢 8-10: Sehr gut geeignet (keine Bedenken)
-- 🟡 6-7: Geeignet mit Begleitung (Eltern sollten mitschauen)
-- 🔴 1-5: Nicht empfohlen (Zu belastend für Alter)
-
-NIEMALS: "Ist Kinderfilm = geeignet." Analysiere unvoreingenommen.`;
+AMPEL:
+8-10 = 🟢 (geeignet)
+6-7 = 🟡 (mit Begleitung)
+1-5 = 🔴 (nicht empfohlen)`;
 
 export async function POST(request: Request) {
   try {
     const { age, filmName } = await request.json();
 
     if (!age || !filmName) {
-      return Response.json(
-        { error: "Alter und Filmname erforderlich" },
-        { status: 400 }
-      );
+      return Response.json({ error: "Alter und Filmname erforderlich" }, { status: 400 });
     }
 
     if (age < 1 || age > 17 || !Number.isInteger(age)) {
-      return Response.json(
-        { error: "Alter muss zwischen 1 und 17 Jahren liegen" },
-        { status: 400 }
-      );
+      return Response.json({ error: "Alter muss zwischen 1-17 liegen" }, { status: 400 });
     }
-
-    // Einfacher Prompt ohne externe filmInfo
-    const userPrompt = `${age} ${filmName}`;
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 1500,
+      max_tokens: 1200,
       system: SYSTEM_PROMPT,
       messages: [
         {
           role: "user",
-          content: userPrompt,
+          content: `Analysiere den Film "${filmName}" für ein ${age}-jähriges empfindliches Kind. Antworte nur JSON, keine weiteren Worte.`,
         },
       ],
     });
 
     const textContent = message.content.find((block) => block.type === "text");
     if (!textContent || textContent.type !== "text") {
-      return Response.json(
-        { error: "Keine Textantwort von Claude" },
-        { status: 500 }
-      );
+      return Response.json({ error: "Keine Antwort von Claude" }, { status: 500 });
     }
 
+    // Cleane JSON
     let jsonText = textContent.text
       .replace(/```json\n?/g, "")
       .replace(/```\n?/g, "")
       .trim();
 
+    // Parse und validiere
     const analysis = JSON.parse(jsonText);
 
     return Response.json(analysis);
   } catch (error) {
     console.error("API Error:", error);
     return Response.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Analysefehler aufgetreten",
-      },
+      { error: error instanceof Error ? error.message : "Fehler" },
       { status: 500 }
     );
   }
