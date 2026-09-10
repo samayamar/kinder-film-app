@@ -47,7 +47,7 @@ export default function Favorites() {
                   </div>
                 </div>
                 <button
-                  onClick={() => deleteAnalysis(idx)}
+                  onClick={() => deleteAnalysis(idx.toString())}
                   className="px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700 transition"
                 >
                   🗑️ Löschen
