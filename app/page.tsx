@@ -37,7 +37,6 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [trailerData, setTrailerData] = useState<TrailerData | null>(null);
   const [streamingData, setStreamingData] = useState<StreamingData | null>(null);
-  const [loadingExtras, setLoadingExtras] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -64,7 +63,6 @@ export default function Home() {
         setError(data.error);
       } else {
         setResult(data);
-        setLoadingExtras(true);
         loadExtras(filmName.trim());
       }
     } catch (err) {
@@ -86,8 +84,6 @@ export default function Home() {
       setStreamingData(streaming);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoadingExtras(false);
     }
   };
 
