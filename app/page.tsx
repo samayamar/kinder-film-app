@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import AnalysisForm from "@/components/AnalysisForm";
