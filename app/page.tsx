@@ -7,6 +7,14 @@ import Header from "@/components/Header";
 import AnalysisForm from "@/components/AnalysisForm";
 import ScoresTable from "@/components/ScoresTable";
 import RecommendationCard from "@/components/RecommendationCard";
+import CriticalScenesCard from "@/components/CriticalScenesCard";
+
+interface CriticalScene {
+  minute: string;
+  was_passiert: string;
+  warum_kritisch: string;
+  ueberspringen: "ja" | "nein" | "optional";
+}
 
 interface AnalysisResult {
   filmName: string;
@@ -17,6 +25,7 @@ interface AnalysisResult {
   begruendung: string;
   empfehlung: string;
   elternhinweise: string[];
+  kritische_szenen?: CriticalScene[];
 }
 
 interface TrailerData {
@@ -140,6 +149,11 @@ export default function Home() {
 
             {/* EMPFEHLUNG */}
             <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
+
+            {/* KRITISCHE SZENEN */}
+            {result.kritische_szenen && result.kritische_szenen.length > 0 && (
+              <CriticalScenesCard szenen={result.kritische_szenen} />
+            )}
 
             {/* TRAILER */}
             {trailerData && (

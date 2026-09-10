@@ -4,87 +4,110 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const SYSTEM_PROMPT = `Du bist ein Kindermedien-Analytiker.
-
-ANTWORTE EXAKT IN DIESEM JSON-FORMAT - KEINE ZUSÄTZE:
-{
-  "filmName": "string",
-  "alter": "number",
-  "gesamtscore": "number zwischen 1-10",
-  "ampel": "🟢 oder 🟡 oder 🔴",
-  "begruendung": "string 2-3 Sätze",
-  "empfehlung": "string kurz",
-  "elternhinweise": ["string1", "string2", "string3"],
-  "scores": {
-    "visuelleReize": {"score": "number", "description": "string"},
-    "tonMusik": {"score": "number", "description": "string"},
-    "emotionaleThemen": {"score": "number", "description": "string"},
-    "spannung": {"score": "number", "description": "string"},
-    "komplexitaet": {"score": "number", "description": "string"}
-  }
-}
-
-ANALYSE-RICHTLINIEN:
-
-4-6 JAHRE: Sehr sensibel für Elternfiguren in Gefahr, Jump-Scares, Monster, Tiere in Gefahr
-7-9 JAHRE: Empfindlich für Mobbing, Elterntod, Ungerechtigkeit, bedrohliche Musik
-10-12 JAHRE: Sensibel für realistische Gewalt gegen Kinder/Tiere, Bullying
-13-17 JAHRE: Können mit Gewalt/Graubereichen umgehen, aber intensive Szenen können belasten
-
-SCORING EINFACH:
-1-3: Kein Risiko (ideal)
-4-6: Niedriges Risiko  
-7: Mittleres Risiko (Vorsicht)
-8-10: Hohes Risiko
-
-AMPEL:
-8-10 = 🟢 (geeignet)
-6-7 = 🟡 (mit Begleitung)
-1-5 = 🔴 (nicht empfohlen)`;
-
 export async function POST(request: Request) {
   try {
-    const { age, filmName } = await request.json();
+    const { age, filmName, eigenschaften } = await request.json();
 
-    if (!age || !filmName) {
-      return Response.json({ error: "Alter und Filmname erforderlich" }, { status: 400 });
+    if (!filmName || !age) {
+      return Response.json(
+        { error: "Filmname und Alter erforderlich" },
+        { status: 400 }
+      );
     }
 
-    if (age < 1 || age > 17 || !Number.isInteger(age)) {
-      return Response.json({ error: "Alter muss zwischen 1-17 liegen" }, { status: 400 });
+    const ageValidation = age >= 1 && age <= 17;
+    if (!ageValidation) {
+      return Response.json(
+        { error: "Alter muss zwischen 1 und 17 liegen" },
+        { status: 400 }
+      );
     }
 
-    const message = await client.messages.create({
+    const systemPrompt = `
+Du bist ein erfahrener Kindermedien-Analytiker. Analysiere den Film AUSSCHLIESSLICH basierend auf faktischen Informationen über Handlung, Szenen und Inhalte. NICHT spekulieren oder annahmen machen.
+
+**WICHTIG: Antworte NUR mit gültigem JSON, keine Markdown-Blöcke, keine Erklärungen.**
+
+Bewerte den Film für ein ${age}-jähriges empfindliches Kind nach 5 Kategorien (1-10 Skala, 1 = kein Risiko, 10 = sehr belastend):
+
+1. **Visuelle Reize**: Dunkelheit, Jump-Scares, beängstigende Figuren, schnelle Schnitte
+2. **Ton & Musik**: Laute Geräusche, bedrohliche Musik, Schreie, Spannung ohne Entlastung
+3. **Emotionale Themen**: Elterntrennung, Tod, Ausgrenzung, Hilflosigkeit
+4. **Spannung & Dramaturgie**: Länge von Bedrohungsszenen, Erholungspausen, Auflösung
+5. **Komplexität**: Verständlichkeit, abstrakte Konzepte, moralische Graubereiche
+
+Gib die Antwort in EXAKT diesem JSON-Format zurück (Pflichtfelder):
+
+{
+  "filmName": "NAME",
+  "alter": ZAHL,
+  "scores": {
+    "visuelle_reize": ZAHL,
+    "ton_musik": ZAHL,
+    "emotionale_themen": ZAHL,
+    "spannung_dramaturgie": ZAHL,
+    "komplexitaet": ZAHL
+  },
+  "gesamtscore": ZAHL,
+  "ampel": "🟢|🟡🟠|🔴",
+  "begruendung": "Satz 1-2 zur Gesamtbewertung",
+  "empfehlung": "Satz zur Empfehlung",
+  "elternhinweise": ["Tipp 1", "Tipp 2"],
+  "kritische_szenen": [
+    {
+      "minute": "ca. 15-20",
+      "was_passiert": "Beschreibung",
+      "warum_kritisch": "Grund",
+      "ueberspringen": "ja|nein|optional"
+    }
+  ]
+}
+
+**Richtlinien:**
+- Ampel: 🟢 (8-10), 🟡🟠 (6-7), 🔴 (1-5)
+- Für kritische Szenen: Nur NACHWEISBARE Szenen aus dem Film nennen
+- "ueberspringen": "ja" nur wenn sehr belastend, "nein" wenn schaubar, "optional" wenn je nach Kind
+- Keine Annahmen oder Spekulationen
+`;
+
+    const userPrompt = `Analysiere "${filmName}" für ein ${age}-jähriges empfindliches Kind.${
+      eigenschaften.length > 0
+        ? ` Zusätzliche Eigenschaften: ${eigenschaften.join(", ")}`
+        : ""
+    }`;
+
+    const response = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 1200,
-      system: SYSTEM_PROMPT,
+      max_tokens: 1500,
       messages: [
         {
           role: "user",
-          content: `Analysiere den Film "${filmName}" für ein ${age}-jähriges empfindliches Kind. Antworte nur JSON, keine weiteren Worte.`,
+          content: userPrompt,
         },
       ],
+      system: systemPrompt,
     });
 
-    const textContent = message.content.find((block) => block.type === "text");
+    const textContent = response.content.find((block) => block.type === "text");
     if (!textContent || textContent.type !== "text") {
-      return Response.json({ error: "Keine Antwort von Claude" }, { status: 500 });
+      return Response.json(
+        { error: "Keine Textantwort von Claude" },
+        { status: 500 }
+      );
     }
 
-    // Cleane JSON
     let jsonText = textContent.text
       .replace(/```json\n?/g, "")
       .replace(/```\n?/g, "")
       .trim();
 
-    // Parse und validiere
-    const analysis = JSON.parse(jsonText);
+    const data = JSON.parse(jsonText);
 
-    return Response.json(analysis);
+    return Response.json(data);
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("Analyze Error:", error);
     return Response.json(
-      { error: error instanceof Error ? error.message : "Fehler" },
+      { error: "Fehler bei der Filmanalyse" },
       { status: 500 }
     );
   }
