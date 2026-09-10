@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
@@ -27,6 +27,13 @@ export default function Favorites() {
   const analyses = getAnalyses();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const selectedAnalysis = selectedIndex !== null ? analyses[selectedIndex] : null;
+
+  // Scroll nach oben wenn Favorit ausgewählt wird
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [selectedIndex]);
 
   const handleNewAnalysis = () => {
     router.push("/");
