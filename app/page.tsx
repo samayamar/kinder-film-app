@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import AnalysisForm from "@/components/AnalysisForm";
@@ -41,6 +41,7 @@ interface StreamingData {
 
 export default function Home() {
   const { saveAnalysis } = useAnalysisStorage();
+  const loadingRef = useRef<HTMLDivElement>(null);
   const [age, setAge] = useState(7);
   const [filmName, setFilmName] = useState("");
   const [properties, setProperties] = useState<string[]>([]);
@@ -57,6 +58,13 @@ export default function Home() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [result]);
+
+  // Scroll zu Loading wenn es startet
+  useEffect(() => {
+    if (loading && loadingRef.current) {
+      loadingRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [loading]);
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +153,7 @@ export default function Home() {
 
             {/* LOADING BAR */}
             {loading && (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+              <div ref={loadingRef} className="bg-white rounded-lg shadow-lg p-8 text-center">
                 <div className="mb-6 flex justify-center">
                   <style>{`
                     @keyframes clapboard {
