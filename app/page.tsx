@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import Header from "@/components/Header";
 import AnalysisForm from "@/components/AnalysisForm";
@@ -101,6 +102,13 @@ export default function Home() {
       <Header />
 
       <div className="max-w-3xl mx-auto p-4 md:p-8">
+        {/* LINK ZU GESPEICHERTEN ANALYSEN */}
+        <div className="mb-6 text-center">
+          <Link href="/favorites" className="text-indigo-600 hover:text-indigo-800 font-semibold text-sm">
+            📚 Meine gespeicherten Filmanalysen
+          </Link>
+        </div>
+
         <AnalysisForm age={age} setAge={setAge} filmName={filmName} setFilmName={setFilmName} properties={properties} setProperties={setProperties} loading={loading} onSubmit={handleAnalyze} />
 
         {error && <div className="bg-red-100 text-red-800 p-4 rounded mb-8">{error}</div>}
@@ -126,6 +134,12 @@ export default function Home() {
                 {saved ? "✓ Gespeichert" : "💾 Speichern"}
               </button>
             </div>
+
+            {/* SCORES TABLE */}
+            <ScoresTable scores={result.scores} />
+
+            {/* EMPFEHLUNG */}
+            <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
 
             {/* TRAILER */}
             {trailerData && (
@@ -167,9 +181,6 @@ export default function Home() {
                 </div>
               </div>
             )}
-
-            <ScoresTable scores={result.scores} />
-            <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
           </div>
         )}
       </div>
