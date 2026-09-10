@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
+import Header from "@/components/Header";
 import AnalysisForm from "@/components/AnalysisForm";
 import ScoresTable from "@/components/ScoresTable";
 import RecommendationCard from "@/components/RecommendationCard";
@@ -20,6 +21,7 @@ interface AnalysisResult {
 interface TrailerData {
   youtubeVideoId: string | null;
   found: boolean;
+  searchUrl: string | null;
 }
 
 interface StreamingData {
@@ -96,15 +98,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      {/* HEADER/BANNER */}
-      <header className="bg-white shadow">
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <h1 className="text-4xl font-bold text-indigo-600">🎬 Filmabend Kids</h1>
-          <p className="text-gray-600 mt-2">Sichere Filmanalyse für empfindliche Kinder</p>
-        </div>
-      </header>
+      <Header />
 
-      {/* MAIN CONTENT */}
       <div className="max-w-3xl mx-auto p-4 md:p-8">
         <AnalysisForm age={age} setAge={setAge} filmName={filmName} setFilmName={setFilmName} properties={properties} setProperties={setProperties} loading={loading} onSubmit={handleAnalyze} />
 
@@ -136,7 +131,7 @@ export default function Home() {
             {trailerData && (
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">🎬 Trailer</h3>
-                {trailerData.found && trailerData.youtubeVideoId ? (
+                {trailerData.youtubeVideoId ? (
                   <iframe 
                     width="100%" 
                     height="300" 
@@ -145,8 +140,15 @@ export default function Home() {
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowFullScreen 
                   />
+                ) : trailerData.searchUrl ? (
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <p className="text-gray-700 mb-3">Trailer nicht in unserer Datenbank vorhanden.</p>
+                    <a href={trailerData.searchUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700">
+                      🔍 Trailer auf KinoCheck suchen
+                    </a>
+                  </div>
                 ) : (
-                  <p className="text-gray-600 text-center py-4">Kein Trailer gefunden</p>
+                  <p className="text-gray-600 text-center py-4">Kein Trailer verfügbar</p>
                 )}
               </div>
             )}
@@ -166,10 +168,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* SCORES */}
             <ScoresTable scores={result.scores} />
-
-            {/* EMPFEHLUNG */}
             <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
           </div>
         )}

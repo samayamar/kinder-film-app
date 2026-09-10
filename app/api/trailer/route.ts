@@ -1,8 +1,16 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { readFileSync } from "fs";
+import { join } from "path";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+function loadTrailerDatabase() {
+  try {
+    const filePath = join(process.cwd(), "lib/data/trailers.json");
+    const data = readFileSync(filePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Trailer DB Error:", error);
+    return { trailers: [], series: [] };
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -12,26 +20,48 @@ export async function POST(request: Request) {
       return Response.json({ error: "Filmname erforderlich" }, { status: 400 });
     }
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 100,
-      messages: [
-        {
-          role: "user",
-          content: `YouTube Trailer Video-ID für "${filmName}". Antworte nur mit ID (z.B. dQw4w9WgXcQ) oder "none".`,
-        },
-      ],
-    });
+    const db = loadTrailerDatabase();
 
-    const textContent = message.content.find((block) => block.type === "text");
-    const videoId = textContent && textContent.type === "text" ? textContent.text.trim() : null;
+    // Suche in Filmen
+    let found = db.trailers.find(
+      (t: any) => t.filmName.toLowerCase() === filmName.toLowerCase()
+    );
+
+    // Suche in Serien
+    if (!found) {
+      found = db.series.find(
+        (s: any) => s.seriesName.toLowerCase() === filmName.toLowerCase()
+      );
+    }
+
+    // Hat ID und es ist nicht "pending"
+    if (found && found.youtubeId && found.youtubeId !== "pending") {
+      return Response.json({
+        filmName,
+        youtubeVideoId: found.youtubeId,
+        found: true,
+        source: "database",
+        searchUrl: null,
+      });
+    }
+
+    // Keine ID oder "pending" → Generate Search Link
+    const searchUrl = `https://www.youtube.com/@KinoCheck/search?query=${encodeURIComponent(filmName)}`;
 
     return Response.json({
       filmName,
-      youtubeVideoId: videoId && videoId !== "none" ? videoId : null,
-      found: videoId !== "none" && !!videoId,
+      youtubeVideoId: null,
+      found: false,
+      source: "search",
+      searchUrl: searchUrl,
     });
   } catch (error) {
-    return Response.json({ filmName: "unknown", found: false, youtubeVideoId: null });
+    console.error("Trailer Error:", error);
+    return Response.json({ 
+      filmName: "unknown", 
+      found: false, 
+      youtubeVideoId: null,
+      searchUrl: null
+    });
   }
 }
