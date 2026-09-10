@@ -1,49 +1,65 @@
 "use client";
 
-import { useCallback } from "react";
+import { useState, useEffect } from "react";
 
-interface AnalysisResult {
+interface AnalysisData {
   filmName: string;
   alter: number;
-  [key: string]: any;
-}
-
-interface StoredAnalysis extends AnalysisResult {
-  id: string;
-  savedAt: string;
-  isFavorite: boolean;
+  scores: any;
+  gesamtscore: number;
+  ampel: string;
+  begruendung: string;
+  empfehlung: string;
+  elternhinweise: string[];
+  kritische_szenen?: any[];
+  timestamp?: number;
 }
 
 export function useAnalysisStorage() {
-  const saveAnalysis = useCallback((analysis: AnalysisResult) => {
-    const analyses = getAnalyses();
-    const newAnalysis: StoredAnalysis = {
-      ...analysis,
-      id: Date.now().toString(),
-      savedAt: new Date().toISOString(),
-      isFavorite: false,
-    };
-    analyses.push(newAnalysis);
-    localStorage.setItem("filmabend-kids-analyses", JSON.stringify(analyses));
-  }, []);
+  const STORAGE_KEY = "filmabend-kids-analyses";
 
-  const getAnalyses = useCallback(() => {
-    if (typeof window === "undefined") return [];
-    const data = localStorage.getItem("filmabend-kids-analyses");
-    return data ? JSON.parse(data) : [];
-  }, []);
+  const saveAnalysis = (analysis: AnalysisData) => {
+    try {
+      const analyses = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const newAnalysis = {
+        ...analysis,
+        timestamp: Date.now(),
+      };
+      analyses.unshift(newAnalysis);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(analyses));
+    } catch (e) {
+      console.error("Save Error:", e);
+    }
+  };
 
-  const deleteAnalysis = useCallback((id: string) => {
-    const analyses = getAnalyses().filter((a: StoredAnalysis) => a.id !== id);
-    localStorage.setItem("filmabend-kids-analyses", JSON.stringify(analyses));
-  }, []);
+  const getAnalyses = (): AnalysisData[] => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    } catch (e) {
+      console.error("Get Error:", e);
+      return [];
+    }
+  };
 
-  const toggleFavorite = useCallback((id: string) => {
-    const analyses = getAnalyses().map((a: StoredAnalysis) =>
-      a.id === id ? { ...a, isFavorite: !a.isFavorite } : a
-    );
-    localStorage.setItem("filmabend-kids-analyses", JSON.stringify(analyses));
-  }, []);
+  const getAnalysis = (index: number): AnalysisData | null => {
+    try {
+      const analyses = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return analyses[index] || null;
+    } catch (e) {
+      console.error("Get Single Error:", e);
+      return null;
+    }
+  };
 
-  return { saveAnalysis, getAnalyses, deleteAnalysis, toggleFavorite };
+  const deleteAnalysis = (index: string) => {
+    try {
+      const analyses = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      analyses.splice(parseInt(index), 1);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(analyses));
+    } catch (e) {
+      console.error("Delete Error:", e);
+    }
+  };
+
+  return { saveAnalysis, getAnalyses, getAnalysis, deleteAnalysis };
 }
