@@ -15,24 +15,20 @@ export async function POST(request: Request) {
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
+    // Claude analysiert basierend auf seinem Training-Wissen
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
-      max_tokens: 2000,
-      tools: [
-        {
-          type: "web_search",
-        },
-      ],
+      max_tokens: 1000,
       messages: [
         {
           role: "user",
-          content: `Suche nach Informationen über den Film "${filmName}":
+          content: `Gib mir Informationen über den Film "${filmName}":
 
-1. PLOT: Kurze Handlungszusammenfassung
-2. SCENE WARNINGS: Gibt es problematische Szenen? (Elternverlust, Tod, Gewalt, Jump-Scares, Musik?)
-3. ALTERSEMPFEHLUNG: Was sagen Eltern-Guides?
+1. PLOT: Kurze Handlung (2-3 Sätze)
+2. PROBLEMATISCHE SZENEN: Elternverlust? Tod? Gewalt? Jump-Scares? Bedrohliche Musik?
+3. ALTERSFREIGABE: FSK oder FSK-ähnlich?
 
-Sei KONKRET und SPEZIFISCH.`,
+Antworte KONKRET, nicht vage.`,
         },
       ],
     });
@@ -40,7 +36,8 @@ Sei KONKRET und SPEZIFISCH.`,
     let filmInfo = "";
     for (const block of message.content) {
       if (block.type === "text") {
-        filmInfo += block.text;
+        filmInfo = block.text;
+        break;
       }
     }
 
@@ -56,7 +53,7 @@ Sei KONKRET und SPEZIFISCH.`,
         filmName: "unknown",
         found: false,
         filmInfo: "",
-        error: error instanceof Error ? error.message : "Fehler bei Suche",
+        error: error instanceof Error ? error.message : "Fehler",
       },
       { status: 500 }
     );
