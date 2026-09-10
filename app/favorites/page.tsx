@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import ScoresTable from "@/components/ScoresTable";
@@ -21,13 +22,14 @@ interface AnalysisData {
 }
 
 export default function Favorites() {
+  const router = useRouter();
   const { getAnalyses, deleteAnalysis } = useAnalysisStorage();
   const analyses = getAnalyses();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const selectedAnalysis = selectedIndex !== null ? analyses[selectedIndex] : null;
 
   const handleNewAnalysis = () => {
-    window.location.href = "/";
+    router.push("/");
   };
 
   return (
