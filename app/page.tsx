@@ -52,10 +52,30 @@ export default function Home() {
     setResult(null);
 
     try {
+      // SCHRITT 1: Search Film Info
+      let filmInfo = "";
+      try {
+        const searchRes = await fetch("/api/search-film", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filmName: filmName.trim() }),
+        });
+        const searchData = await searchRes.json();
+        filmInfo = searchData.filmInfo || "";
+      } catch (err) {
+        console.warn("Search fehlgeschlagen:", err);
+      }
+
+      // SCHRITT 2: Analyze mit Film Info
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ age, filmName: filmName.trim(), eigenschaften: properties }),
+        body: JSON.stringify({ 
+          age, 
+          filmName: filmName.trim(), 
+          eigenschaften: properties,
+          filmInfo: filmInfo
+        }),
       });
 
       const data = await response.json();
@@ -66,7 +86,7 @@ export default function Home() {
         loadExtras(filmName.trim());
       }
     } catch (err) {
-      setError("Fehler");
+      setError("Fehler bei Analyse");
     } finally {
       setLoading(false);
     }
