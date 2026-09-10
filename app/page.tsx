@@ -50,6 +50,8 @@ export default function Home() {
     setLoading(true);
     setError("");
     setResult(null);
+    setTrailerData(null);
+    setStreamingData(null);
 
     try {
       const response = await fetch("/api/analyze", {
@@ -88,19 +90,29 @@ export default function Home() {
       setTrailerData(trailer);
       setStreamingData(streaming);
     } catch (err) {
-      console.error(err);
+      console.error("Extras Fehler:", err);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+      {/* HEADER/BANNER */}
+      <header className="bg-white shadow">
+        <div className="max-w-3xl mx-auto px-4 py-6">
+          <h1 className="text-4xl font-bold text-indigo-600">🎬 Filmabend Kids</h1>
+          <p className="text-gray-600 mt-2">Sichere Filmanalyse für empfindliche Kinder</p>
+        </div>
+      </header>
+
+      {/* MAIN CONTENT */}
+      <div className="max-w-3xl mx-auto p-4 md:p-8">
         <AnalysisForm age={age} setAge={setAge} filmName={filmName} setFilmName={setFilmName} properties={properties} setProperties={setProperties} loading={loading} onSubmit={handleAnalyze} />
 
         {error && <div className="bg-red-100 text-red-800 p-4 rounded mb-8">{error}</div>}
 
         {result && (
           <div className="space-y-6">
+            {/* HAUPTERGEBNIS */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
@@ -115,33 +127,49 @@ export default function Home() {
               <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-indigo-500 mb-4">
                 <p className="text-gray-700 text-sm">{result.begruendung}</p>
               </div>
-              <button onClick={() => { saveAnalysis(result); setSaved(true); }} className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700">
-                {saved ? "✓ Gespeichert" : "Speichern"}
+              <button onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }} className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700">
+                {saved ? "✓ Gespeichert" : "💾 Speichern"}
               </button>
             </div>
 
-            {trailerData && trailerData.found && trailerData.youtubeVideoId && (
+            {/* TRAILER */}
+            {trailerData && (
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">🎬 Trailer</h3>
-                <iframe width="100%" height="300" src={`https://www.youtube-nocookie.com/embed/${trailerData.youtubeVideoId}`} frameBorder="0" allowFullScreen />
+                {trailerData.found && trailerData.youtubeVideoId ? (
+                  <iframe 
+                    width="100%" 
+                    height="300" 
+                    src={`https://www.youtube-nocookie.com/embed/${trailerData.youtubeVideoId}`} 
+                    frameBorder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen 
+                  />
+                ) : (
+                  <p className="text-gray-600 text-center py-4">Kein Trailer gefunden</p>
+                )}
               </div>
             )}
 
+            {/* STREAMING */}
             {streamingData && (
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">📺 Wo kann man den Film schauen?</h3>
                 <div className="space-y-3">
-                  <a href={streamingData.werstraamtUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700">
-                    Verfügbarkeit auf werstreamt.es
+                  <a href={streamingData.werstraamtUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700 transition">
+                    ▶️ Verfügbarkeit auf werstreamt.es
                   </a>
-                  <a href={streamingData.kinoDeUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-amber-600 text-white rounded font-semibold hover:bg-amber-700">
-                    Kinos & Streaming auf kino.de
+                  <a href={streamingData.kinoDeUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-amber-600 text-white rounded font-semibold hover:bg-amber-700 transition">
+                    🎭 Kinos & Streaming auf kino.de
                   </a>
                 </div>
               </div>
             )}
 
+            {/* SCORES */}
             <ScoresTable scores={result.scores} />
+
+            {/* EMPFEHLUNG */}
             <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
           </div>
         )}
