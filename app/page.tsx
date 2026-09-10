@@ -52,36 +52,14 @@ export default function Home() {
     setResult(null);
 
     try {
-      // SCHRITT 1: Search Film Info (optional)
-      let filmInfo = "";
-      try {
-        const searchRes = await fetch("/api/search-film", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ filmName: filmName.trim() }),
-        });
-        const searchData = await searchRes.json();
-        filmInfo = searchData.filmInfo || "";
-      } catch (err) {
-        console.warn("Search fehlgeschlagen, fahre ohne Info fort");
-      }
-
-      // SCHRITT 2: Analyze
-      const analyzePayload = { 
-        age, 
-        filmName: filmName.trim(), 
-        eigenschaften: properties
-      };
-
-      // Nur filmInfo hinzufügen, wenn es existiert
-      if (filmInfo) {
-        Object.assign(analyzePayload, { filmInfo });
-      }
-
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(analyzePayload),
+        body: JSON.stringify({ 
+          age, 
+          filmName: filmName.trim(), 
+          eigenschaften: properties
+        }),
       });
 
       const data = await response.json();

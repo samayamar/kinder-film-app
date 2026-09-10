@@ -74,17 +74,6 @@ EXTREME SENSIBILITÄT FÜR:
   * Score: +8-10 (Emotionale Themen)
 - ❌ LAUTE/BEDROHLICHE MUSIK: Direkte körperliche Stress-Reaktion
   * Score: +7-10 (Ton & Musik)
-- ⚠️ UNAUFGELÖSTE SZENEN: Brauchen schnelle Happy-Endings
-  * Score: +6-8 (Spannung)
-
-SCORING-RICHTLINIEN:
-- Elternfigur in Gefahr: +9
-- Jump-Scares: +8-10
-- Verwandlungen: +7-9
-- Tiere in Gefahr: +8-10
-- Bedrohliche Musik: +8
-- Ungelöste Konflikte: +6-8
-- Gesamtscore: 🔴 bei mehreren dieser Punkte
 
 ─────────────────────────────────────────
 
@@ -107,15 +96,6 @@ EXTREME SENSIBILITÄT FÜR:
 - ⚠️ KÖRPERLICHE GEWALT: Abhängig von Kontext
   * Score: +5-8 (Visuelle Reize)
 
-SCORING-RICHTLINIEN:
-- Mobbing: +8-10
-- Elterntod: +7-9
-- Ungerechtigkeit ungelöst: +7-9
-- Moralische Ambiguität: +6-8
-- Lange Spannungsszenen: +6-8
-- Realistische Gewalt: +7-9
-- Gesamtscore: 🟡 bei mehreren Punkten; 🔴 bei Mobbing/Ungerechtigkeit
-
 ─────────────────────────────────────────
 
 🧑‍🦰 10-12 JAHRE (Formal Operational emerging - Piaget)
@@ -136,14 +116,6 @@ MODERATE SENSIBILITÄT FÜR:
 - ✅ MORALISCH KOMPLEXE SZENEN: Beginnen zu verstehen
   * Score: +3-5 (Komplexität)
 
-SCORING-RICHTLINIEN:
-- Gewalt gegen Kinder (realistisch): +7-9
-- Gewalt gegen Tiere (realistisch): +7-9
-- Bullying: +6-8
-- Sexuelle Andeutungen: +4-6
-- Moralische Komplexität: +3-5
-- Gesamtscore: 🟡 bei mehreren Punkten; 🔴 bei Gewalt gegen Kinder
-
 ─────────────────────────────────────────
 
 🧑 13-17 JAHRE (Formal Operational - Piaget)
@@ -162,13 +134,6 @@ MODERATE-NIEDRIGE SENSIBILITÄT:
 - ✅ SEXUELLE INHALTE: Je nach Kontext
   * Score: +3-6 (abhängig von Kontext)
 
-SCORING-RICHTLINIEN:
-- Realistische Gewalt (Kontext-abhängig): +4-7
-- Psychologische Belastung: +4-6
-- Moralische Ambiguität: +2-4
-- Sexuelle Inhalte: +3-6
-- Gesamtscore: 🟢 bei den meisten Inhalten; 🟡 bei sehr intensiven Szenen
-
 ═══════════════════════════════════════════════════════════════
 ALLGEMEINE SCORING-REGELN
 ═══════════════════════════════════════════════════════════════
@@ -182,7 +147,7 @@ NIEMALS: "Ist Kinderfilm = geeignet." Analysiere unvoreingenommen.`;
 
 export async function POST(request: Request) {
   try {
-    const { age, filmName, filmInfo } = await request.json();
+    const { age, filmName } = await request.json();
 
     if (!age || !filmName) {
       return Response.json(
@@ -198,12 +163,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Baue Prompt mit Film-Informationen
-    let userPrompt = `${age} ${filmName}`;
-    
-    if (filmInfo) {
-      userPrompt += `\n\nZUSÄTZLICHE INFORMATIONEN (von Web-Recherche):\n${filmInfo}`;
-    }
+    // Einfacher Prompt ohne externe filmInfo
+    const userPrompt = `${age} ${filmName}`;
 
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
