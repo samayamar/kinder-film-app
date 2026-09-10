@@ -1,17 +1,12 @@
 "use client";
 
-interface Score {
-  score: number;
-  description: string;
-}
-
 interface Props {
   scores: {
-    visuelleReize: Score;
-    tonMusik: Score;
-    emotionaleThemen: Score;
-    spannung: Score;
-    komplexitaet: Score;
+    visuelle_reize: number;
+    ton_musik: number;
+    emotionale_themen: number;
+    spannung_dramaturgie: number;
+    komplexitaet: number;
   };
 }
 
@@ -24,21 +19,21 @@ export default function ScoresTable({ scores }: Props) {
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Bewertung</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-4">📊 Bewertung</h3>
       <table className="w-full text-sm">
         <tbody className="divide-y divide-gray-200">
           {[
-            { name: "Visuelle Reize", item: scores.visuelleReize },
-            { name: "Ton & Musik", item: scores.tonMusik },
-            { name: "Emotionale Themen", item: scores.emotionaleThemen },
-            { name: "Spannung", item: scores.spannung },
-            { name: "Komplexitaet", item: scores.komplexitaet },
+            { name: "🎬 Visuelle Reize", score: scores.visuelle_reize },
+            { name: "🎵 Ton & Musik", score: scores.ton_musik },
+            { name: "💔 Emotionale Themen", score: scores.emotionale_themen },
+            { name: "⚡ Spannung & Dramaturgie", score: scores.spannung_dramaturgie },
+            { name: "🧠 Komplexität", score: scores.komplexitaet },
           ].map((row) => (
             <tr key={row.name}>
               <td className="py-3 px-4 font-medium text-gray-700">{row.name}</td>
               <td className="py-3 px-4 text-right">
-                <span className={`${getColor(row.item.score)} text-white px-3 py-1 rounded text-xs font-bold`}>
-                  {row.item.score}/10
+                <span className={`${getColor(row.score)} text-white px-3 py-1 rounded text-xs font-bold`}>
+                  {row.score}/10
                 </span>
               </td>
             </tr>
