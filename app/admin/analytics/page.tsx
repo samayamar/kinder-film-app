@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { adminFetch } from '@/lib/adminFetch';
 
 interface TopFilm {
   film_name: string;
@@ -24,7 +25,7 @@ export default function AnalyticsPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/admin/analytics')
+    adminFetch('/api/admin/analytics')
       .then(r => r.json())
       .then(data => {
         if (data.error) { setError(data.error); return; }

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { adminFetch } from '@/lib/adminFetch';
 
 interface FeedbackEntry {
   id: number;
@@ -18,7 +19,7 @@ export default function FeedbackPage() {
   const [filter, setFilter]     = useState<'all' | 'critical' | 'positive'>('all');
 
   useEffect(() => {
-    fetch('/api/admin/feedback')
+    adminFetch('/api/admin/feedback')
       .then(r => r.json())
       .then(data => {
         if (data.error) { setError(data.error); return; }

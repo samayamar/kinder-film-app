@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { adminFetch } from '@/lib/adminFetch';
 
 interface Trailer {
   id: number;
@@ -25,7 +26,7 @@ export default function TrailerReportPage() {
 
   const load = () => {
     setLoading(true);
-    fetch('/api/admin/trailer-report')
+    adminFetch('/api/admin/trailer-report')
       .then(r => r.json())
       .then(data => {
         if (data.error) { setError(data.error); return; }
@@ -51,17 +52,13 @@ export default function TrailerReportPage() {
   const handleSave = async (id: number) => {
     setSaving(true);
     setSaveMsg('');
-    const adminPassword = sessionStorage.getItem('admin_auth_pw') ?? '';
     const newYoutubeId  = editValue.trim() || null;
     const newVerified   = !!editValue.trim();
 
     try {
-      const res = await fetch('/api/admin/update-trailer', {
+      const res = await adminFetch('/api/admin/update-trailer', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-key': adminPassword,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, youtube_id: newYoutubeId, verified: newVerified }),
       });
 

@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { requireAdmin } from '@/lib/adminAuth';
 
 export async function POST(req: NextRequest) {
-  // Auth-Check
-  const adminKey = req.headers.get('x-admin-key');
-  if (adminKey !== process.env.ADMIN_PASSWORD) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const denied = requireAdmin(req);
+  if (denied) return denied;
 
   const { id, youtube_id, verified } = await req.json();
 
