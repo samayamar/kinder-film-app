@@ -4,28 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import AnalysisForm from "@/components/AnalysisForm";
-import ScoresTable from "@/components/ScoresTable";
-import RecommendationCard from "@/components/RecommendationCard";
-import CriticalScenesCard from "@/components/CriticalScenesCard";
-
-interface CriticalScene {
-  minute: string;
-  was_passiert: string;
-  warum_kritisch: string;
-  ueberspringen: "ja" | "nein" | "optional";
-}
-
-interface AnalysisResult {
-  filmName: string;
-  alter: number;
-  scores: any;
-  gesamtscore: number;
-  ampel: string;
-  begruendung: string;
-  empfehlung: string;
-  elternhinweise: string[];
-  kritische_szenen?: CriticalScene[];
-}
+import ResultView, { AnalysisResult } from "@/components/ResultView";
+import ShareButton from "@/components/ShareButton";
 
 interface TrailerData {
   youtubeVideoId: string | null;
@@ -182,39 +162,20 @@ export default function Home() {
         {/* ERGEBNIS - WENN FERTIG */}
         {result && (
           <div className="space-y-6">
-            {/* HAUPTERGEBNIS */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">{result.filmName}</h2>
-                  <p className="text-gray-600">für {result.alter}-Jährige</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-5xl font-bold text-indigo-600">{result.gesamtscore}/10</div>
-                  <div className="text-4xl">{result.ampel}</div>
-                </div>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-indigo-500 mb-4">
-                <p className="text-gray-700 text-sm">{result.begruendung}</p>
-              </div>
-              <button 
-                onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }} 
-                className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700"
-              >
-                {saved ? "✓ Zu Favoriten hinzugefügt" : "⭐ Zu Favoriten hinzufügen"}
-              </button>
-            </div>
+            <ResultView
+              result={result}
+              actions={
+                <button
+                  onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
+                  className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700"
+                >
+                  {saved ? "✓ Zu Favoriten hinzugefügt" : "⭐ Zu Favoriten hinzufügen"}
+                </button>
+              }
+            />
 
-            {/* SCORES TABLE */}
-            <ScoresTable scores={result.scores} gesamtscore={result.gesamtscore} />
-
-            {/* EMPFEHLUNG */}
-            <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
-
-            {/* KRITISCHE SZENEN */}
-            {result.kritische_szenen && result.kritische_szenen.length > 0 && (
-              <CriticalScenesCard szenen={result.kritische_szenen} />
-            )}
+            {/* TEILEN */}
+            <ShareButton shareId={result.shareId} filmName={result.filmName} />
 
             {/* TRAILER */}
             {trailerData && (

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { saveResult } from '@/lib/results';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -35,7 +36,8 @@ export async function POST(req: NextRequest) {
       // Trotzdem loggen (found_in_db: true)
       await logSearch({ filmName, filmYear, age, foundInDb: true });
 
-      return NextResponse.json(cached.result);
+      const shareId = await saveResult({ result: cached.result, filmName, filmYear, age });
+      return NextResponse.json({ ...cached.result, shareId });
     }
   } catch (cacheErr) {
     console.error('Cache-Check fehlgeschlagen (unkritisch):', cacheErr);
@@ -141,7 +143,10 @@ Ampel: "🟢 Sehr gut geeignet" | "🟡 Geeignet mit Begleitung" | "🟠 Mit Vor
   // ── 5. SEARCH LOG ────────────────────────────────────────────
   await logSearch({ filmName, filmYear, age, foundInDb: false, youtubeId });
 
-  return NextResponse.json(result);
+  // ── 6. ERGEBNIS FÜR SHARE-LINK SPEICHERN (auch mit Eigenschaften) ──
+  const shareId = await saveResult({ result, filmName, filmYear, age, eigenschaften });
+
+  return NextResponse.json({ ...result, shareId });
 }
 
 // ── HELPER ────────────────────────────────────────────────────
