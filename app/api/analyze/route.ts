@@ -1,114 +1,170 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { age, filmName, filmYear, eigenschaften } = body;
 
-export async function POST(request: Request) {
+  if (!age || !filmName) {
+    return NextResponse.json({ error: 'Alter und Filmname erforderlich' }, { status: 400 });
+  }
+
+  const filmNameNormalized = filmName.toLowerCase().trim();
+
+  // ── 1. CACHE CHECK (nur ohne Eigenschaften) ─────────────────
+  const hasEigenschaften = eigenschaften && eigenschaften.length > 0;
   try {
-    const { age, filmName, eigenschaften } = await request.json();
+    if (hasEigenschaften) throw new Error('skip_cache');
+    let cacheQuery = supabase
+      .from('analyses')
+      .select('result')
+      .eq('film_name', filmNameNormalized)
+      .eq('age', age);
 
-    if (!filmName || !age) {
-      return Response.json(
-        { error: "Filmname und Alter erforderlich" },
-        { status: 400 }
-      );
+    if (filmYear) {
+      cacheQuery = cacheQuery.eq('film_year', filmYear);
+    } else {
+      cacheQuery = cacheQuery.is('film_year', null);
     }
 
-    const ageValidation = age >= 1 && age <= 17;
-    if (!ageValidation) {
-      return Response.json(
-        { error: "Alter muss zwischen 1 und 17 liegen" },
-        { status: 400 }
-      );
+    const { data: cached } = await cacheQuery.maybeSingle();
+
+    if (cached?.result) {
+      console.log(`✅ Cache Hit: ${filmName} (${age}J)`);
+
+      // Trotzdem loggen (found_in_db: true)
+      await logSearch({ filmName, filmYear, age, foundInDb: true });
+
+      return NextResponse.json(cached.result);
     }
+  } catch (cacheErr) {
+    console.error('Cache-Check fehlgeschlagen (unkritisch):', cacheErr);
+  }
 
-    const systemPrompt = `
-Du bist ein erfahrener Kindermedien-Analytiker. Analysiere den Film AUSSCHLIESSLICH basierend auf faktischen Informationen über Handlung, Szenen und Inhalte. NICHT spekulieren oder annahmen machen.
+  // ── 2. TRAILER INFO (für Logging) ───────────────────────────
+  let youtubeId: string | null = null;
+  try {
+    const trailerRes = await fetch(`${req.nextUrl.origin}/api/trailer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filmName, filmYear }),
+    });
+    if (trailerRes.ok) {
+      const trailerData = await trailerRes.json();
+      youtubeId = trailerData.youtubeVideoId ?? null;
+    }
+  } catch {
+    // Trailer-Fehler sind nicht kritisch
+  }
 
-**WICHTIG: Antworte NUR mit gültigem JSON, keine Markdown-Blöcke, keine Erklärungen.**
+  // ── 3. CLAUDE API ────────────────────────────────────────────
+  let result;
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY!,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: `Du bist ein Kindermedien-Analytiker. Analysiere Filme für empfindliche Kinder.
+Antworte NUR mit validem JSON, ohne Markdown, ohne Erklärungen.
 
-Bewerte den Film für ein ${age}-jähriges empfindliches Kind nach 5 Kategorien (1-10 Skala, 1 = kein Risiko, 10 = sehr belastend):
-
-1. **Visuelle Reize**: Dunkelheit, Jump-Scares, beängstigende Figuren, schnelle Schnitte
-2. **Ton & Musik**: Laute Geräusche, bedrohliche Musik, Schreie, Spannung ohne Entlastung
-3. **Emotionale Themen**: Elterntrennung, Tod, Ausgrenzung, Hilflosigkeit
-4. **Spannung & Dramaturgie**: Länge von Bedrohungsszenen, Erholungspausen, Auflösung
-5. **Komplexität**: Verständlichkeit, abstrakte Konzepte, moralische Graubereiche
-
-Gib die Antwort in EXAKT diesem JSON-Format zurück (Pflichtfelder):
-
+JSON-Schema:
 {
-  "filmName": "NAME",
-  "alter": ZAHL,
+  "filmName": string,
+  "alter": number,
   "scores": {
-    "visuelle_reize": ZAHL,
-    "ton_musik": ZAHL,
-    "emotionale_themen": ZAHL,
-    "spannung_dramaturgie": ZAHL,
-    "komplexitaet": ZAHL
+    "visuelle_reize": number,
+    "ton_musik": number,
+    "emotionale_themen": number,
+    "spannung_dramaturgie": number,
+    "komplexitaet": number
   },
-  "gesamtscore": ZAHL,
-  "ampel": "🟢|🟡🟠|🔴",
-  "begruendung": "Satz 1-2 zur Gesamtbewertung",
-  "empfehlung": "Satz zur Empfehlung",
-  "elternhinweise": ["Tipp 1", "Tipp 2"],
+  "gesamtscore": number,
+  "ampel": string,
+  "begruendung": string,
+  "empfehlung": string,
+  "elternhinweise": string[],
   "kritische_szenen": [
     {
-      "minute": "ca. 15-20",
-      "was_passiert": "Beschreibung",
-      "warum_kritisch": "Grund",
-      "ueberspringen": "ja|nein|optional"
+      "titel": string,
+      "minute": string,
+      "was_passiert": string,
+      "warum_kritisch": string,
+      "ueberspringen": "ja" | "nein" | "optional"
     }
   ]
 }
 
-**Richtlinien:**
-- Ampel: 🟢 (8-10), 🟡🟠 (6-7), 🔴 (1-5)
-- Für kritische Szenen: Nur NACHWEISBARE Szenen aus dem Film nennen
-- "ueberspringen": "ja" nur wenn sehr belastend, "nein" wenn schaubar, "optional" wenn je nach Kind
-- Keine Annahmen oder Spekulationen
-`;
-
-    const userPrompt = `Analysiere "${filmName}" für ein ${age}-jähriges empfindliches Kind.${
-      eigenschaften.length > 0
-        ? ` Zusätzliche Eigenschaften: ${eigenschaften.join(", ")}`
-        : ""
-    }`;
-
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1500,
-      messages: [
-        {
-          role: "user",
-          content: userPrompt,
-        },
-      ],
-      system: systemPrompt,
+Scores: 1 = kein Risiko, 10 = stark belastend
+Gesamtscore: 1 = ungeeignet, 10 = ideal geeignet
+Ampel: "🟢 Sehr gut geeignet" | "🟡 Geeignet mit Begleitung" | "🟠 Mit Vorsicht" | "🔴 Nicht empfohlen"`,
+        messages: [
+          {
+            role: 'user',
+            content: `Analysiere "${filmName}"${filmYear ? ` (${filmYear})` : ''} für ein empfindliches Kind von ${age} Jahren.${eigenschaften?.length ? ` Besondere Eigenschaften: ${eigenschaften.join(', ')}.` : ''}`,
+          },
+        ],
+      }),
     });
 
-    const textContent = response.content.find((block) => block.type === "text");
-    if (!textContent || textContent.type !== "text") {
-      return Response.json(
-        { error: "Keine Textantwort von Claude" },
-        { status: 500 }
-      );
+    if (!response.ok) {
+      throw new Error(`Claude API Fehler: ${response.status}`);
     }
 
-    let jsonText = textContent.text
-      .replace(/```json\n?/g, "")
-      .replace(/```\n?/g, "")
-      .trim();
+    const data = await response.json();
+    const text = data.content[0].text;
+    result = JSON.parse(text);
+  } catch (err) {
+    console.error('Claude API Fehler:', err);
+    return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 });
+  }
 
-    const data = JSON.parse(jsonText);
+  // ── 4. ANALYSE CACHEN (nur ohne Eigenschaften) ───────────────
+  try {
+    if (hasEigenschaften) throw new Error('skip_cache');
+    await supabase.from('analyses').insert({
+      film_name: filmNameNormalized,
+      film_year: filmYear ?? null,
+      age,
+      result,
+    });
+    console.log(`💾 Gecacht: ${filmName} (${age}J)`);
+  } catch (saveErr) {
+    console.error('Cache-Speichern fehlgeschlagen (unkritisch):', saveErr);
+  }
 
-    return Response.json(data);
-  } catch (error) {
-    console.error("Analyze Error:", error);
-    return Response.json(
-      { error: "Fehler bei der Filmanalyse" },
-      { status: 500 }
-    );
+  // ── 5. SEARCH LOG ────────────────────────────────────────────
+  await logSearch({ filmName, filmYear, age, foundInDb: false, youtubeId });
+
+  return NextResponse.json(result);
+}
+
+// ── HELPER ────────────────────────────────────────────────────
+async function logSearch({
+  filmName, filmYear, age, foundInDb, youtubeId = null,
+}: {
+  filmName: string;
+  filmYear?: number;
+  age: number;
+  foundInDb: boolean;
+  youtubeId?: string | null;
+
+}) {
+  try {
+    await supabase.from('search_log').insert({
+      film_name: filmName,
+      film_year: filmYear ?? null,
+      age,
+      found_in_db: foundInDb,
+      has_youtube_id: !!youtubeId,
+      youtube_id: youtubeId,
+    });
+  } catch (logErr) {
+    console.error('Search Log fehlgeschlagen (unkritisch):', logErr);
   }
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import FeedbackButton from "@/components/FeedbackButton";
 
 export const metadata: Metadata = {
   title: "Kinder-Film-Analyzer",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de">
-      <body>{children}</body>
+      <body>
+        {children}
+        <FeedbackButton />
+      </body>
     </html>
   );
 }

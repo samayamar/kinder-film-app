@@ -120,7 +120,7 @@ export default function Favorites() {
             </div>
 
             {/* SCORES TABLE */}
-            <ScoresTable scores={selectedAnalysis.scores} />
+            <ScoresTable scores={selectedAnalysis.scores} gesamtscore={selectedAnalysis.gesamtscore} />
 
             {/* EMPFEHLUNG */}
             <RecommendationCard

@@ -206,7 +206,7 @@ export default function Home() {
             </div>
 
             {/* SCORES TABLE */}
-            <ScoresTable scores={result.scores} />
+            <ScoresTable scores={result.scores} gesamtscore={result.gesamtscore} />
 
             {/* EMPFEHLUNG */}
             <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
