@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { requireAdmin } from '@/lib/adminAuth';
 
 export async function POST(req: NextRequest) {
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
 
   const { id, youtube_id, verified } = await req.json();

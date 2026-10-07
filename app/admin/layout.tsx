@@ -26,7 +26,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         sessionStorage.setItem('admin_auth_pw', password);
         setAuthorized(true);
       } else {
-        setError('Falsches Passwort');
+        const data = await res.json().catch(() => null);
+        setError(res.status === 429 && data?.error ? data.error : 'Falsches Passwort');
       }
     } catch {
       setError('Verbindungsfehler');

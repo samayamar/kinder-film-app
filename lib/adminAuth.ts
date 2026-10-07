@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'crypto';
 import { NextResponse } from 'next/server';
+import { clearFailures, getClientIp, lockedForSeconds, recordFailure } from '@/lib/loginLimiter';
 
 function matchesAdminPassword(candidate: string | null | undefined): boolean {
   const expected = process.env.ADMIN_PASSWORD;
@@ -9,15 +10,42 @@ function matchesAdminPassword(candidate: string | null | undefined): boolean {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
-/** Prüft den x-admin-key-Header. Gibt bei Fehler eine Antwort zurück, sonst null. */
-export function requireAdmin(req: Request): NextResponse | null {
+function lockedResponse(seconds: number) {
+  return NextResponse.json(
+    { error: `Zu viele Fehlversuche. Bitte in ${Math.ceil(seconds / 60)} Min. erneut versuchen.` },
+    { status: 429, headers: { 'Retry-After': String(seconds) } }
+  );
+}
+
+/**
+ * Prüft ein Admin-Passwort mit Sperre nach zu vielen Fehlversuchen pro IP.
+ * Gibt bei Fehler eine Antwort zurück, sonst null. Ein fehlendes Passwort zählt nicht als Fehlversuch.
+ */
+export async function checkAdminPassword(req: Request, candidate: string | null | undefined): Promise<NextResponse | null> {
   if (!process.env.ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'ADMIN_PASSWORD nicht gesetzt' }, { status: 500 });
   }
-  if (!matchesAdminPassword(req.headers.get('x-admin-key'))) {
+
+  const ip = getClientIp(req);
+  const locked = await lockedForSeconds(ip);
+  if (locked > 0) return lockedResponse(locked);
+
+  if (!candidate) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+
+  if (!matchesAdminPassword(candidate)) {
+    await recordFailure(ip);
+    const nowLocked = await lockedForSeconds(ip);
+    if (nowLocked > 0) return lockedResponse(nowLocked);
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  await clearFailures(ip);
   return null;
 }
 
-export { matchesAdminPassword };
+/** Prüft den x-admin-key-Header (siehe checkAdminPassword). */
+export function requireAdmin(req: Request) {
+  return checkAdminPassword(req, req.headers.get('x-admin-key'));
+}
