@@ -40,7 +40,7 @@ export default function Favorites() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface">
       <Header showNewAnalysisLink={selectedAnalysis === null} onNewAnalysis={handleNewAnalysis} />
 
       <div className="max-w-3xl mx-auto p-4 md:p-8">
@@ -63,7 +63,7 @@ export default function Favorites() {
                       <h2 className="text-2xl font-bold text-gray-900">{analysis.filmName}</h2>
                       <p className="text-gray-600">Alter: {analysis.alter} Jahre</p>
                       <div className="flex items-center gap-3 mt-2">
-                        <span className="text-3xl font-bold text-indigo-600">{analysis.gesamtscore}/10</span>
+                        <span className="text-3xl font-bold text-brand">{analysis.gesamtscore}/10</span>
                         <span className="text-3xl">{analysis.ampel}</span>
                       </div>
                     </div>
@@ -72,7 +72,7 @@ export default function Favorites() {
                         e.stopPropagation();
                         deleteAnalysis(idx.toString());
                       }}
-                      className="px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700 transition"
+                      className="px-4 py-2 bg-bad-text text-white rounded font-semibold hover:bg-bad-dark transition"
                     >
                       🗑️ Löschen
                     </button>
@@ -88,7 +88,7 @@ export default function Favorites() {
           <div className="space-y-6">
             <button
               onClick={() => setSelectedIndex(null)}
-              className="text-indigo-600 hover:text-indigo-800 font-semibold mb-4"
+              className="text-brand hover:text-brand-dark font-semibold mb-4"
             >
               ← Zurück zu Favoriten
             </button>
@@ -101,11 +101,11 @@ export default function Favorites() {
                   <p className="text-gray-600">für {selectedAnalysis.alter}-Jährige</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-5xl font-bold text-indigo-600">{selectedAnalysis.gesamtscore}/10</div>
+                  <div className="text-5xl font-bold text-brand">{selectedAnalysis.gesamtscore}/10</div>
                   <div className="text-4xl">{selectedAnalysis.ampel}</div>
                 </div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-indigo-500 mb-4">
+              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-brand mb-4">
                 <p className="text-gray-700 text-sm">{selectedAnalysis.begruendung}</p>
               </div>
               <button
@@ -113,7 +113,7 @@ export default function Favorites() {
                   deleteAnalysis(selectedIndex!.toString());
                   setSelectedIndex(null);
                 }}
-                className="w-full py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700"
+                className="w-full py-2 bg-bad-text text-white rounded font-semibold hover:bg-bad-dark"
               >
                 🗑️ Aus Favoriten entfernen
               </button>

@@ -55,16 +55,16 @@ export default function FeedbackPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6 text-sm">{error}</div>
+        <div className="bg-bad-soft border border-bad/30 text-bad-text rounded-lg p-4 mb-6 text-sm">{error}</div>
       )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'Gesamt',       value: entries.length,                              color: 'text-gray-800',  bg: 'bg-white' },
-          { label: 'Ø Bewertung',  value: `${avgRating} ⭐`,                           color: 'text-yellow-700',bg: 'bg-yellow-50' },
-          { label: 'Positiv (4-5)',value: entries.filter(e => e.rating >= 4).length,   color: 'text-green-700', bg: 'bg-green-50' },
-          { label: 'Kritisch (1-3)',value: entries.filter(e => e.rating <= 3).length,  color: 'text-red-700',   bg: 'bg-red-50' },
+          { label: 'Ø Bewertung',  value: `${avgRating} ⭐`,                           color: 'text-caution-text',bg: 'bg-caution-soft' },
+          { label: 'Positiv (4-5)',value: entries.filter(e => e.rating >= 4).length,   color: 'text-good-text', bg: 'bg-good-soft' },
+          { label: 'Kritisch (1-3)',value: entries.filter(e => e.rating <= 3).length,  color: 'text-bad-text',   bg: 'bg-bad-soft' },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl p-4 border border-gray-100 shadow-sm`}>
             <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
@@ -85,7 +85,7 @@ export default function FeedbackPage() {
             onClick={() => setFilter(f.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === f.key
-                ? 'bg-blue-600 text-white'
+                ? 'bg-brand text-white'
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
             }`}
           >
@@ -103,7 +103,7 @@ export default function FeedbackPage() {
         ) : (
           filtered.map(e => (
             <div key={e.id} className={`bg-white rounded-xl border shadow-sm p-4 ${
-              e.rating <= 3 ? 'border-red-100' : 'border-gray-100'
+              e.rating <= 3 ? 'border-bad-soft' : 'border-gray-100'
             }`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">

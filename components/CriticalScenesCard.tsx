@@ -15,14 +15,14 @@ export default function CriticalScenesCard({ szenen }: Props) {
   }
 
   const getSkipLabel = (skip: string) => {
-    if (skip === "ja") return { label: "🔴 Überspringen", color: "bg-red-100 border-red-500" };
-    if (skip === "nein") return { label: "🟢 Unproblematisch", color: "bg-green-100 border-green-500" };
-    return { label: "🟡 Optional", color: "bg-yellow-100 border-yellow-500" };
+    if (skip === "ja") return { label: "🔴 Überspringen", color: "bg-bad-soft border-bad" };
+    if (skip === "nein") return { label: "🟢 Unproblematisch", color: "bg-good-soft border-good" };
+    return { label: "🟡 Optional", color: "bg-caution-soft border-caution" };
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-bold mb-4 text-red-600">⚠️ Kritische Szenen</h3>
+      <h3 className="text-xl font-bold mb-4 text-bad-text">⚠️ Kritische Szenen</h3>
       <div className="space-y-4">
         {szenen.map((szene, idx) => {
           const skipInfo = getSkipLabel(szene.ueberspringen);

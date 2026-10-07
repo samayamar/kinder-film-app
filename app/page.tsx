@@ -111,7 +111,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface">
       <Header showNewAnalysisLink={result !== null} onNewAnalysis={handleNewAnalysis} />
 
       <div className="max-w-3xl mx-auto p-4 md:p-8">
@@ -129,7 +129,7 @@ export default function Home() {
               onSubmit={handleAnalyze} 
             />
 
-            {error && <div className="bg-red-100 text-red-800 p-4 rounded mb-8">{error}</div>}
+            {error && <div className="bg-bad-soft text-bad-text p-4 rounded mb-8">{error}</div>}
 
             {/* LOADING BAR */}
             {loading && (
@@ -152,7 +152,7 @@ export default function Home() {
                 </div>
                 <p className="text-gray-700 font-semibold mb-4">Analysiere "{filmName}"...</p>
                 <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                  <div className="bg-indigo-600 h-full animate-pulse rounded-full"></div>
+                  <div className="bg-brand h-full animate-pulse rounded-full"></div>
                 </div>
               </div>
             )}
@@ -165,17 +165,17 @@ export default function Home() {
             <ResultView
               result={result}
               actions={
-                <button
-                  onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
-                  className="w-full py-2 bg-green-600 text-white rounded font-semibold hover:bg-green-700"
-                >
-                  {saved ? "✓ Zu Favoriten hinzugefügt" : "⭐ Zu Favoriten hinzufügen"}
-                </button>
+                <>
+                  <button
+                    onClick={() => { saveAnalysis(result); setSaved(true); setTimeout(() => setSaved(false), 2000); }}
+                    className="w-full py-2 bg-brand text-white rounded font-semibold hover:bg-brand-dark"
+                  >
+                    {saved ? "✓ Zu Favoriten hinzugefügt" : "⭐ Zu Favoriten hinzufügen"}
+                  </button>
+                  <ShareButton shareId={result.shareId} filmName={result.filmName} />
+                </>
               }
             />
-
-            {/* TEILEN */}
-            <ShareButton shareId={result.shareId} filmName={result.filmName} />
 
             {/* TRAILER */}
             {trailerData && (
@@ -191,9 +191,9 @@ export default function Home() {
                     allowFullScreen 
                   />
                 ) : trailerData.searchUrl ? (
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="bg-brand-soft p-4 rounded-lg border border-brand-soft">
                     <p className="text-gray-700 mb-3">Trailer nicht in unserer Datenbank vorhanden.</p>
-                    <a href={trailerData.searchUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700">
+                    <a href={trailerData.searchUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 bg-brand text-white rounded font-semibold hover:bg-brand-dark">
                       🔍 Trailer auf KinoCheck suchen
                     </a>
                   </div>
@@ -208,10 +208,10 @@ export default function Home() {
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-xl font-bold mb-4">📺 Wo kann man den Film schauen?</h3>
                 <div className="space-y-3">
-                  <a href={streamingData.werstraamtUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700 transition">
+                  <a href={streamingData.werstraamtUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-brand text-white rounded font-semibold hover:bg-brand-dark transition">
                     ▶️ Verfügbarkeit auf werstreamt.es
                   </a>
-                  <a href={streamingData.kinoDeUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-amber-600 text-white rounded font-semibold hover:bg-amber-700 transition">
+                  <a href={streamingData.kinoDeUrl} target="_blank" rel="noopener noreferrer" className="block w-full text-center py-3 bg-accent text-ink rounded font-semibold hover:bg-accent-dark transition">
                     🎭 Kinos & Streaming auf kino.de
                   </a>
                 </div>

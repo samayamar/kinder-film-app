@@ -117,17 +117,17 @@ export default function TrailerReportPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6 text-sm">{error}</div>
+        <div className="bg-bad-soft border border-bad/30 text-bad-text rounded-lg p-4 mb-6 text-sm">{error}</div>
       )}
 
       {/* Stats — live aus trailers-State berechnet */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         {[
           { label: 'Gesamt',        value: liveStats.total,      color: 'text-gray-800',   bg: 'bg-white' },
-          { label: 'Mit ID',        value: liveStats.withId,     color: 'text-green-700',  bg: 'bg-green-50' },
-          { label: 'Fehlend',       value: liveStats.missing,    color: 'text-red-700',    bg: 'bg-red-50' },
-          { label: 'Verifiziert',   value: liveStats.verified,   color: 'text-blue-700',   bg: 'bg-blue-50' },
-          { label: 'Unverifiziert', value: liveStats.unverified, color: 'text-yellow-700', bg: 'bg-yellow-50' },
+          { label: 'Mit ID',        value: liveStats.withId,     color: 'text-good-text',  bg: 'bg-good-soft' },
+          { label: 'Fehlend',       value: liveStats.missing,    color: 'text-bad-text',    bg: 'bg-bad-soft' },
+          { label: 'Verifiziert',   value: liveStats.verified,   color: 'text-brand-dark',   bg: 'bg-brand-soft' },
+          { label: 'Unverifiziert', value: liveStats.unverified, color: 'text-caution-text', bg: 'bg-caution-soft' },
         ].map(s => (
           <div key={s.label} className={`${s.bg} rounded-xl p-4 border border-gray-100 shadow-sm`}>
             <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
@@ -148,7 +148,7 @@ export default function TrailerReportPage() {
             onClick={() => setFilter(f.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               filter === f.key
-                ? 'bg-blue-600 text-white'
+                ? 'bg-brand text-white'
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
             }`}
           >
@@ -178,7 +178,7 @@ export default function TrailerReportPage() {
                 <td className="px-4 py-3 text-gray-500">{t.film_year ?? '—'}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    t.type === 'movie' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'
+                    t.type === 'movie' ? 'bg-brand-soft text-brand-dark' : 'bg-accent-soft text-accent-text'
                   }`}>
                     {t.type === 'movie' ? '🎬 Film' : '📺 Serie'}
                   </span>
@@ -196,16 +196,16 @@ export default function TrailerReportPage() {
                         if (e.key === 'Escape') handleCancel();
                       }}
                       placeholder="YouTube-ID"
-                      className="border border-blue-300 rounded px-2 py-1 text-xs w-36 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="border border-brand-soft rounded px-2 py-1 text-xs w-36 focus:outline-none focus:ring-2 focus:ring-brand"
                     />
                   ) : t.youtube_id ? (
-                    <span className="text-green-700">{t.youtube_id}</span>
+                    <span className="text-good-text">{t.youtube_id}</span>
                   ) : (
-                    <span className="text-red-500 font-sans font-medium">Fehlt</span>
+                    <span className="text-bad-text font-sans font-medium">Fehlt</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">
-                  {t.verified ? <span className="text-green-600">✅</span> : <span className="text-gray-300">○</span>}
+                  {t.verified ? <span className="text-good-text">✅</span> : <span className="text-gray-300">○</span>}
                 </td>
                 <td className="px-4 py-3 text-center">
                   {t.search_count > 0
@@ -219,7 +219,7 @@ export default function TrailerReportPage() {
                       <button
                         onClick={() => handleSave(t.id)}
                         disabled={saving}
-                        className="bg-green-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-green-700 disabled:opacity-50"
+                        className="bg-brand text-white px-3 py-1 rounded text-xs font-medium hover:bg-brand-dark disabled:opacity-50"
                       >
                         {saving ? '...' : 'Speichern'}
                       </button>
@@ -233,7 +233,7 @@ export default function TrailerReportPage() {
                   ) : (
                     <button
                       onClick={() => handleEdit(t)}
-                      className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                      className="text-brand hover:text-brand-dark text-xs font-medium"
                     >
                       ✏️ Edit
                     </button>

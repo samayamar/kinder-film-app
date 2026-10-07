@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mb-6 text-sm">{error}</div>
+        <div className="bg-bad-soft border border-bad/30 text-bad-text rounded-lg p-4 mb-6 text-sm">{error}</div>
       )}
 
       {stats && (
@@ -59,8 +59,8 @@ export default function AnalyticsPage() {
           <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4">
             {[
               { label: 'Gesamt Suchanfragen', value: stats.totalSearches, color: 'text-gray-800',  bg: 'bg-white' },
-              { label: 'Cache Hits',          value: stats.cacheHits,     color: 'text-green-700', bg: 'bg-green-50' },
-              { label: 'Claude API Calls',    value: stats.totalSearches - stats.cacheHits, color: 'text-blue-700', bg: 'bg-blue-50' },
+              { label: 'Cache Hits',          value: stats.cacheHits,     color: 'text-good-text', bg: 'bg-good-soft' },
+              { label: 'Claude API Calls',    value: stats.totalSearches - stats.cacheHits, color: 'text-brand-dark', bg: 'bg-brand-soft' },
             ].map(s => (
               <div key={s.label} className={`${s.bg} rounded-xl p-4 border border-gray-100 shadow-sm`}>
                 <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
@@ -86,7 +86,7 @@ export default function AnalyticsPage() {
                       </div>
                       <div className="bg-gray-100 rounded-full h-1.5">
                         <div
-                          className="bg-blue-500 h-1.5 rounded-full"
+                          className="bg-brand h-1.5 rounded-full"
                           style={{ width: `${Math.round((film.count / stats.topFilms[0].count) * 100)}%` }}
                         />
                       </div>
@@ -113,7 +113,7 @@ export default function AnalyticsPage() {
                         <div className="flex items-center justify-between mb-1">
                           <div className="bg-gray-100 rounded-full h-1.5 flex-1 mr-2">
                             <div
-                              className="bg-purple-500 h-1.5 rounded-full"
+                              className="bg-accent h-1.5 rounded-full"
                               style={{ width: `${pct}%` }}
                             />
                           </div>

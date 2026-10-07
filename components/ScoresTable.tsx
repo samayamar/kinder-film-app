@@ -12,15 +12,15 @@ interface Props {
 }
 
 function getRiskColor(score: number): string {
-  if (score <= 4) return 'text-green-600 bg-green-50';
-  if (score <= 7) return 'text-yellow-600 bg-yellow-50';
-  return 'text-red-600 bg-red-50';
+  if (score <= 4) return 'text-good-text bg-good-soft';
+  if (score <= 7) return 'text-caution-text bg-caution-soft';
+  return 'text-bad-text bg-bad-soft';
 }
 
 function getRiskBar(score: number): string {
-  if (score <= 4) return 'bg-green-500';
-  if (score <= 7) return 'bg-yellow-500';
-  return 'bg-red-500';
+  if (score <= 4) return 'bg-good';
+  if (score <= 7) return 'bg-caution';
+  return 'bg-bad';
 }
 
 function getRiskLabel(score: number): string {
@@ -30,9 +30,9 @@ function getRiskLabel(score: number): string {
 }
 
 export function getGesamtColor(pct: number): string {
-  if (pct <= 40) return 'text-red-600';
-  if (pct <= 80) return 'text-yellow-600';
-  return 'text-green-600';
+  if (pct <= 40) return 'text-bad-text';
+  if (pct <= 80) return 'text-caution-text';
+  return 'text-good-text';
 }
 
 export function getGesamtLabel(pct: number): string {
@@ -42,9 +42,9 @@ export function getGesamtLabel(pct: number): string {
 }
 
 function getGesamtBarColor(pct: number): string {
-  if (pct <= 40) return 'bg-red-500';
-  if (pct <= 80) return 'bg-yellow-500';
-  return 'bg-green-500';
+  if (pct <= 40) return 'bg-bad';
+  if (pct <= 80) return 'bg-caution';
+  return 'bg-good';
 }
 
 const KATEGORIEN = [

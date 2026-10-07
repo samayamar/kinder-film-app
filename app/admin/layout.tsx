@@ -49,13 +49,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-          className="w-full border border-gray-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-200 rounded-lg px-4 py-2 mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
         />
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+        {error && <p className="text-bad-text text-sm mb-3">{error}</p>}
         <button
           onClick={handleLogin}
           disabled={loading || !password}
-          className="w-full bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+          className="w-full bg-brand text-white rounded-lg py-2 text-sm font-medium hover:bg-brand-dark disabled:opacity-50"
         >
           {loading ? 'Prüfe...' : 'Anmelden'}
         </button>

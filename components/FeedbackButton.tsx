@@ -66,7 +66,7 @@ export default function FeedbackButton({ filmName, filmYear, age }: FeedbackButt
       <button
         onClick={() => setOpen(true)}
         title="Feedback geben"
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center text-2xl"
+        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-brand text-white shadow-lg hover:bg-brand-dark active:scale-95 transition-all flex items-center justify-center text-2xl"
       >
         💬
       </button>
@@ -129,7 +129,7 @@ export default function FeedbackButton({ filmName, filmYear, age }: FeedbackButt
                         onClick={() => setHelpful(opt.value)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium border transition ${
                           helpful === opt.value
-                            ? 'bg-blue-600 text-white border-blue-600'
+                            ? 'bg-brand text-white border-brand'
                             : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                       >
@@ -150,17 +150,17 @@ export default function FeedbackButton({ filmName, filmYear, age }: FeedbackButt
                     onChange={e => setComment(e.target.value)}
                     placeholder="War die Bewertung zutreffend? Was hat gefehlt?"
                     rows={3}
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand resize-none"
                   />
                 </div>
 
-                {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+                {error && <p className="text-bad-text text-sm mb-4">{error}</p>}
 
                 <div className="flex gap-3">
                   <button
                     onClick={handleSubmit}
                     disabled={sending || !rating}
-                    className="flex-1 bg-blue-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+                    className="flex-1 bg-brand text-white rounded-lg py-2.5 text-sm font-medium hover:bg-brand-dark disabled:opacity-50 transition"
                   >
                     {sending ? 'Wird gesendet...' : 'Absenden'}
                   </button>

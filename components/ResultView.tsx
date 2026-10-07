@@ -38,7 +38,7 @@ export default function ResultView({ result, actions }: Props) {
             <div className={`text-lg font-semibold ${getGesamtColor(pct)}`}>{getGesamtLabel(pct)}</div>
           </div>
         </div>
-        <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-indigo-500 mb-4">
+        <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-brand mb-4">
           <p className="text-gray-700 text-sm">{result.begruendung}</p>
         </div>
         {actions && <div className="space-y-2">{actions}</div>}

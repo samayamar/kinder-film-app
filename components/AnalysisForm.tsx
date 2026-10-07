@@ -28,14 +28,14 @@ export default function AnalysisForm({ age, setAge, filmName, setFilmName, prope
       <div className="space-y-6">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Alter: <span className="text-indigo-600 text-lg font-bold">{age} Jahre</span>
+            Alter: <span className="text-brand text-lg font-bold">{age} Jahre</span>
           </label>
-          <input type="range" min="1" max="17" value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded accent-indigo-600" />
+          <input type="range" min="1" max="17" value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-full h-2 bg-gray-200 rounded accent-brand" />
         </div>
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Filmname</label>
-          <input type="text" value={filmName} onChange={(e) => setFilmName(e.target.value)} placeholder="z.B. Frozen, Dumbo..." className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+          <input type="text" value={filmName} onChange={(e) => setFilmName(e.target.value)} placeholder="z.B. Frozen, Dumbo..." className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand outline-none" />
         </div>
 
         <div>
@@ -45,8 +45,8 @@ export default function AnalysisForm({ age, setAge, filmName, setFilmName, prope
               <p className="text-xs font-bold text-gray-600 uppercase mb-2">{group === "emotional" ? "Emotional" : group === "sensorisch" ? "Sensorisch" : group === "kognitiv" ? "Kognitiv" : "Sozial"}</p>
               <div className="grid grid-cols-1 gap-2">
                 {items.map((prop) => (
-                  <label key={prop} className="flex items-center gap-3 p-2 border border-gray-200 rounded cursor-pointer hover:bg-indigo-50">
-                    <input type="checkbox" checked={properties.includes(prop)} onChange={() => toggleProperty(prop)} className="w-4 h-4 text-indigo-600 rounded cursor-pointer" />
+                  <label key={prop} className="flex items-center gap-3 p-2 border border-gray-200 rounded cursor-pointer hover:bg-brand-soft">
+                    <input type="checkbox" checked={properties.includes(prop)} onChange={() => toggleProperty(prop)} className="w-4 h-4 text-brand rounded cursor-pointer" />
                     <span className="text-sm text-gray-700">{prop}</span>
                   </label>
                 ))}
@@ -55,7 +55,7 @@ export default function AnalysisForm({ age, setAge, filmName, setFilmName, prope
           ))}
         </div>
 
-        <button type="submit" disabled={loading} className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 disabled:bg-gray-400">
+        <button type="submit" disabled={loading} className="w-full py-3 bg-brand text-white font-semibold rounded-lg hover:bg-brand-dark disabled:bg-gray-400">
           {loading ? "Analysiere..." : "Film Analysieren"}
         </button>
       </div>

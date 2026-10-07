@@ -40,6 +40,8 @@ Required env vars (`.env.local`, gitignored; `.env.example` only lists the Anthr
 
 **Supabase** is accessed server-side only, always through the service-role client from `lib/supabase.ts`. Tables used: `analyses`, `trailers`, `search_log`, `feedback`. The schema is not in the repo.
 
+**Styling**: Tailwind with a custom palette ("Ruhig", petrol + sand) defined in `tailwind.config.ts`: `brand`, `accent`, `ink`, `surface`, a tinted `gray` scale, and the rating colors `good`/`caution`/`bad`. Keep green/yellow/red for the traffic-light rating only; use `*-text` variants for text on light backgrounds (the base tones are too light for AA contrast) and `brand` for ordinary actions. Don't use raw Tailwind colors like `indigo-600` or `blue-500`.
+
 ## Gotchas
 
 - `next build` prints a non-fatal `localStorage is not defined` error while prerendering `/favorites`, because `getAnalyses()` is called during render instead of in an effect. The build still succeeds.

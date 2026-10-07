@@ -23,10 +23,10 @@ export default async function SharedResultPage({ params }: Params) {
   if (!row) notFound();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen bg-surface">
       <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
         <header>
-          <Link href="/" className="text-2xl font-bold text-indigo-600">
+          <Link href="/" className="text-2xl font-bold text-brand">
             🎬 Filmabend Kids
           </Link>
           <p className="text-sm text-gray-600">Geteilte Filmanalyse für empfindliche Kinder</p>
@@ -36,7 +36,7 @@ export default async function SharedResultPage({ params }: Params) {
 
         <Link
           href="/"
-          className="block w-full text-center py-3 bg-indigo-600 text-white rounded font-semibold hover:bg-indigo-700"
+          className="block w-full text-center py-3 bg-brand text-white rounded font-semibold hover:bg-brand-dark"
         >
           Eigenen Film analysieren
         </Link>

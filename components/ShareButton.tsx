@@ -29,9 +29,9 @@ export default function ShareButton({ shareId, filmName }: { shareId?: string | 
       onClick={handleShare}
       disabled={!shareId}
       title={shareId ? undefined : "Link konnte nicht erstellt werden"}
-      className="w-full py-3 bg-indigo-600 text-white rounded-lg shadow-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full py-2 bg-accent text-ink rounded font-semibold hover:bg-accent-dark disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      {!shareId ? "🔗 Teilen derzeit nicht verfügbar" : state === "copied" ? "✓ Link kopiert" : "🔗 Ergebnis teilen"}
+      {!shareId ? "🔗 Teilen nicht verfügbar" : state === "copied" ? "✓ Link kopiert" : "🔗 Teilen"}
     </button>
   );
 }

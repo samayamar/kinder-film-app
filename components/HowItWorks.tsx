@@ -9,7 +9,7 @@ export default function HowItWorks() {
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-semibold text-sm transition whitespace-nowrap"
+        className="flex items-center gap-2 text-brand hover:text-brand-dark font-semibold text-sm transition whitespace-nowrap"
       >
         {open ? "▼" : "▶"} Wie funktioniert es?
       </button>
