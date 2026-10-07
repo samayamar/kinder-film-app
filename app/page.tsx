@@ -24,6 +24,7 @@ export default function Home() {
   const loadingRef = useRef<HTMLDivElement>(null);
   const [age, setAge] = useState(7);
   const [filmName, setFilmName] = useState("");
+  const [filmYear, setFilmYear] = useState<number | null>(null);
   const [properties, setProperties] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -66,6 +67,7 @@ export default function Home() {
         body: JSON.stringify({ 
           age, 
           filmName: filmName.trim(), 
+          ...(filmYear ? { filmYear } : {}),
           eigenschaften: properties
         }),
       });
@@ -75,7 +77,7 @@ export default function Home() {
         setError(data.error);
       } else {
         setResult(data);
-        loadExtras(filmName.trim());
+        loadExtras(filmName.trim(), filmYear);
       }
     } catch (err) {
       setError("Fehler bei Analyse");
@@ -92,13 +94,14 @@ export default function Home() {
     setError("");
     setAge(7);
     setFilmName("");
+    setFilmYear(null);
     setProperties([]);
   };
 
-  const loadExtras = async (film: string) => {
+  const loadExtras = async (film: string, year: number | null) => {
     try {
       const [trailerRes, streamingRes] = await Promise.all([
-        fetch("/api/trailer", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ filmName: film }) }),
+        fetch("/api/trailer", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ filmName: film, ...(year ? { filmYear: year } : {}) }) }),
         fetch("/api/streaming", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ filmName: film }) }),
       ]);
       const trailer = await trailerRes.json();
@@ -123,6 +126,7 @@ export default function Home() {
               setAge={setAge} 
               filmName={filmName} 
               setFilmName={setFilmName} 
+              setFilmYear={setFilmYear}
               properties={properties} 
               setProperties={setProperties} 
               loading={loading} 

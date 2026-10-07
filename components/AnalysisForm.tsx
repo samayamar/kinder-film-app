@@ -1,10 +1,13 @@
 "use client";
 
+import FilmNameInput from "@/components/FilmNameInput";
+
 interface Props {
   age: number;
   setAge: (age: number) => void;
   filmName: string;
   setFilmName: (name: string) => void;
+  setFilmYear: (year: number | null) => void;
   properties: string[];
   setProperties: (props: string[]) => void;
   loading: boolean;
@@ -18,7 +21,7 @@ const PROPERTIES = {
   sozial: ["Mobbing/Ausgrenzung", "Fantasy-Szenen verwirren"],
 };
 
-export default function AnalysisForm({ age, setAge, filmName, setFilmName, properties, setProperties, loading, onSubmit }: Props) {
+export default function AnalysisForm({ age, setAge, filmName, setFilmName, setFilmYear, properties, setProperties, loading, onSubmit }: Props) {
   const toggleProperty = (prop: string) => {
     setProperties(properties.includes(prop) ? properties.filter(p => p !== prop) : [...properties, prop]);
   };
@@ -35,7 +38,7 @@ export default function AnalysisForm({ age, setAge, filmName, setFilmName, prope
 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Filmname</label>
-          <input type="text" value={filmName} onChange={(e) => setFilmName(e.target.value)} placeholder="z.B. Frozen, Dumbo..." className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand outline-none" />
+          <FilmNameInput value={filmName} onChange={setFilmName} onSelectYear={setFilmYear} />
         </div>
 
         <div>
