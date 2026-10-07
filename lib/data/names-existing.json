@@ -1,0 +1,382 @@
+{
+ "Frozen": {
+  "nameDe": "Die Eiskönigin – Völlig unverfroren",
+  "nameEn": "Frozen",
+  "nameEs": "Frozen: El reino del hielo"
+ },
+ "Frozen 2": {
+  "nameDe": "Die Eiskönigin 2",
+  "nameEn": "Frozen 2",
+  "nameEs": "Frozen 2"
+ },
+ "Ratatouille": {
+  "nameDe": "Ratatouille",
+  "nameEn": "Ratatouille",
+  "nameEs": "Ratatouille"
+ },
+ "Kung Fu Panda": {
+  "nameDe": "Kung Fu Panda",
+  "nameEn": "Kung Fu Panda",
+  "nameEs": "Kung Fu Panda"
+ },
+ "Kung Fu Panda 2": {
+  "nameDe": "Kung Fu Panda 2",
+  "nameEn": "Kung Fu Panda 2",
+  "nameEs": "Kung Fu Panda 2"
+ },
+ "Kung Fu Panda 3": {
+  "nameDe": "Kung Fu Panda 3",
+  "nameEn": "Kung Fu Panda 3",
+  "nameEs": "Kung Fu Panda 3"
+ },
+ "Hotel Transylvania": {
+  "nameDe": "Hotel Transsilvanien",
+  "nameEn": "Hotel Transylvania",
+  "nameEs": "Hotel Transilvania"
+ },
+ "Hotel Transylvania 2": {
+  "nameDe": "Hotel Transsilvanien 2",
+  "nameEn": "Hotel Transylvania 2",
+  "nameEs": "Hotel Transilvania 2"
+ },
+ "Hotel Transylvania 3": {
+  "nameDe": "Hotel Transsilvanien 3 – Ein Monster Urlaub",
+  "nameEn": "Hotel Transylvania 3: Summer Vacation",
+  "nameEs": "Hotel Transilvania 3: Unas vacaciones monstruosas"
+ },
+ "Shrek": {
+  "nameDe": "Shrek – Der tollkühne Held",
+  "nameEn": "Shrek",
+  "nameEs": "Shrek"
+ },
+ "Shrek 2": {
+  "nameDe": "Shrek 2 – Der tollkühne Held kehrt zurück",
+  "nameEn": "Shrek 2",
+  "nameEs": "Shrek 2"
+ },
+ "Shrek Forever After": {
+  "nameDe": "Shrek – Für immer Shrek",
+  "nameEn": "Shrek Forever After",
+  "nameEs": "Shrek, felices para siempre"
+ },
+ "Ice Age": {
+  "nameDe": "Ice Age",
+  "nameEn": "Ice Age",
+  "nameEs": "Ice Age"
+ },
+ "Ice Age 2": {
+  "nameDe": "Ice Age 2 – Jetzt taut's",
+  "nameEn": "Ice Age: The Meltdown",
+  "nameEs": "Ice Age 2: El deshielo"
+ },
+ "Ice Age 3": {
+  "nameDe": "Ice Age 3 – Die Dinosaurier sind los",
+  "nameEn": "Ice Age: Dawn of the Dinosaurs",
+  "nameEs": "Ice Age 3: El origen de los dinosaurios"
+ },
+ "Finding Nemo": {
+  "nameDe": "Findet Nemo",
+  "nameEn": "Finding Nemo",
+  "nameEs": "Buscando a Nemo"
+ },
+ "Finding Dory": {
+  "nameDe": "Findet Dorie",
+  "nameEn": "Finding Dory",
+  "nameEs": "Buscando a Dory"
+ },
+ "Toy Story": {
+  "nameDe": "Toy Story",
+  "nameEn": "Toy Story",
+  "nameEs": "Toy Story"
+ },
+ "Toy Story 3": {
+  "nameDe": "Toy Story 3",
+  "nameEn": "Toy Story 3",
+  "nameEs": "Toy Story 3"
+ },
+ "Toy Story 4": {
+  "nameDe": "Toy Story 4",
+  "nameEn": "Toy Story 4",
+  "nameEs": "Toy Story 4"
+ },
+ "Monsters Inc": {
+  "nameDe": "Die Monster AG",
+  "nameEn": "Monsters, Inc.",
+  "nameEs": "Monstruos, S.A."
+ },
+ "Monsters University": {
+  "nameDe": "Die Monster Uni",
+  "nameEn": "Monsters University",
+  "nameEs": "Monstruos University"
+ },
+ "Cars": {
+  "nameDe": "Cars",
+  "nameEn": "Cars",
+  "nameEs": "Cars"
+ },
+ "Cars 2": {
+  "nameDe": "Cars 2",
+  "nameEn": "Cars 2",
+  "nameEs": "Cars 2"
+ },
+ "Cars 3": {
+  "nameDe": "Cars 3",
+  "nameEn": "Cars 3",
+  "nameEs": "Cars 3"
+ },
+ "Sing": {
+  "nameDe": "Sing – Die Show deines Lebens",
+  "nameEn": "Sing",
+  "nameEs": "Sing: ¡Ven y canta!"
+ },
+ "Sing 2": {
+  "nameDe": "Sing – Die Show deines Lebens 2",
+  "nameEn": "Sing 2",
+  "nameEs": "Sing 2: ¡Ven y vuelve a cantar!"
+ },
+ "Zootopia": {
+  "nameDe": "Zoomania",
+  "nameEn": "Zootopia",
+  "nameEs": "Zootrópolis"
+ },
+ "Inside Out": {
+  "nameDe": "Alles steht Kopf",
+  "nameEn": "Inside Out",
+  "nameEs": "Del revés"
+ },
+ "Inside Out 2": {
+  "nameDe": "Alles steht Kopf 2",
+  "nameEn": "Inside Out 2",
+  "nameEs": "Del revés 2"
+ },
+ "Coco": {
+  "nameDe": "Coco – Lebendiger als das Leben!",
+  "nameEn": "Coco",
+  "nameEs": "Coco"
+ },
+ "Encanto": {
+  "nameDe": "Encanto",
+  "nameEn": "Encanto",
+  "nameEs": "Encanto"
+ },
+ "Moana": {
+  "nameDe": "Vaiana",
+  "nameEn": "Moana",
+  "nameEs": "Vaiana"
+ },
+ "Der König der Löwen": {
+  "nameDe": "Der König der Löwen",
+  "nameEn": "The Lion King",
+  "nameEs": "El rey león"
+ },
+ "Aladdin": {
+  "nameDe": "Aladdin",
+  "nameEn": "Aladdin",
+  "nameEs": "Aladdín"
+ },
+ "Beauty and the Beast": {
+  "nameDe": "Die Schöne und das Biest",
+  "nameEn": "Beauty and the Beast",
+  "nameEs": "La bella y la bestia"
+ },
+ "Tangled": {
+  "nameDe": "Rapunzel – Neu verföhnt",
+  "nameEn": "Tangled",
+  "nameEs": "Enredados"
+ },
+ "Wreck-It Ralph": {
+  "nameDe": "Ralph reichts",
+  "nameEn": "Wreck-It Ralph",
+  "nameEs": "¡Rompe Ralph!"
+ },
+ "Ralph Breaks the Internet": {
+  "nameDe": "Chaos im Netz",
+  "nameEn": "Ralph Breaks the Internet",
+  "nameEs": "Ralph rompe Internet"
+ },
+ "Spider-Man Into the Spider-Verse": {
+  "nameDe": "Spider-Man: A New Universe",
+  "nameEn": "Spider-Man: Into the Spider-Verse",
+  "nameEs": "Spider-Man: Un nuevo universo"
+ },
+ "Coraline": {
+  "nameDe": "Coraline",
+  "nameEn": "Coraline",
+  "nameEs": "Los mundos de Coraline"
+ },
+ "ParaNorman": {
+  "nameDe": "ParaNorman",
+  "nameEn": "ParaNorman",
+  "nameEs": "ParaNorman"
+ },
+ "The Lego Movie": {
+  "nameDe": "The Lego Movie",
+  "nameEn": "The Lego Movie",
+  "nameEs": "La LEGO película"
+ },
+ "The Lego Movie 2": {
+  "nameDe": "The Lego Movie 2",
+  "nameEn": "The Lego Movie 2: The Second Part",
+  "nameEs": "La LEGO película 2"
+ },
+ "Der wilde Roboter": {
+  "nameDe": "Der wilde Roboter",
+  "nameEn": "The Wild Robot",
+  "nameEs": "Robot salvaje"
+ },
+ "Transformers One": {
+  "nameDe": "Transformers One",
+  "nameEn": "Transformers One",
+  "nameEs": "Transformers One"
+ },
+ "Mufasa: Der König der Löwen": {
+  "nameDe": "Mufasa: Der König der Löwen",
+  "nameEn": "Mufasa: The Lion King",
+  "nameEs": "Mufasa: El rey león"
+ },
+ "Zoomania 2": {
+  "nameDe": "Zoomania 2",
+  "nameEn": "Zootopia 2",
+  "nameEs": "Zootrópolis 2"
+ },
+ "Ein Minecraft Film": {
+  "nameDe": "Ein Minecraft Film",
+  "nameEn": "A Minecraft Movie",
+  "nameEs": "Una película de Minecraft"
+ },
+ "Gabby's Dollhouse": {
+  "nameDe": "Gabbys Puppenhaus",
+  "nameEn": "Gabby's Dollhouse",
+  "nameEs": "La casa de muñecas de Gabby"
+ },
+ "Animaniacs (Revival)": {
+  "nameDe": "Animaniacs",
+  "nameEn": "Animaniacs",
+  "nameEs": "Animaniacs"
+ },
+ "Pinky & The Brain (Revival)": {
+  "nameDe": "Pinky und der Brain",
+  "nameEn": "Pinky and the Brain",
+  "nameEs": "Pinky y Cerebro"
+ },
+ "Avatar: Der Herr der Elemente Staffel 2": {
+  "nameDe": "Avatar: Der Herr der Elemente – Staffel 2",
+  "nameEn": "Avatar: The Last Airbender – Season 2",
+  "nameEs": "Avatar: La leyenda de Aang – Temporada 2"
+ },
+ "Bleib am Ball – egal was kommt!": {
+  "nameDe": "Bleib am Ball – egal was kommt!",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Beckett – Die neunte Chance": {
+  "nameDe": "Beckett – Die neunte Chance",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Die Schule der magischen Tiere 3": {
+  "nameDe": "Die Schule der magischen Tiere 3",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Das Geheimnis der Perlimps": {
+  "nameDe": "Das Geheimnis der Perlimps",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Niko – Reise zu den Polarlichtern": {
+  "nameDe": "Niko – Reise zu den Polarlichtern",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Die Heinzels – Neue Mützen, Neue Mission": {
+  "nameDe": "Die Heinzels – Neue Mützen, Neue Mission",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "SpongeBob – Piraten Ahoi": {
+  "nameDe": "SpongeBob – Piraten Ahoi",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Bibi Blocksberg – Das große Hexentreffen": {
+  "nameDe": "Bibi Blocksberg – Das große Hexentreffen",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Bambi – Eine Lebensgeschichte aus dem Wald": {
+  "nameDe": "Bambi – Eine Lebensgeschichte aus dem Wald",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Checker Tobi: Die Erdumlauf-Mission": {
+  "nameDe": "Checker Tobi: Die Erdumlauf-Mission",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Charlie der Superhund": {
+  "nameDe": "Charlie der Superhund",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Die Schule des Mutes – Rule Breakers": {
+  "nameDe": "Die Schule des Mutes – Rule Breakers",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "G.O.A.T. – Bock auf große Sprünge": {
+  "nameDe": "G.O.A.T. – Bock auf große Sprünge",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Das geheime Stockwerk": {
+  "nameDe": "Das geheime Stockwerk",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Mein Freund Barry": {
+  "nameDe": "Mein Freund Barry",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Meine Freundin Conni – Abenteuer mit Kranich Klaus": {
+  "nameDe": "Meine Freundin Conni – Abenteuer mit Kranich Klaus",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "The Mandalorian & Grogu": {
+  "nameDe": "The Mandalorian & Grogu",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Marsupilami": {
+  "nameDe": "Marsupilami",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Emil und die Detektive": {
+  "nameDe": "Emil und die Detektive",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Der kleine Rabe Socke": {
+  "nameDe": "Der kleine Rabe Socke",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Yo Gabba Gabba!Land": {
+  "nameDe": "Yo Gabba Gabba!Land",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Unicorn Island": {
+  "nameDe": "Unicorn Island",
+  "nameEn": null,
+  "nameEs": null
+ },
+ "Dr. Seuss: Horton! Staffel 2": {
+  "nameDe": "Dr. Seuss: Horton! Staffel 2",
+  "nameEn": null,
+  "nameEs": null
+ }
+}
