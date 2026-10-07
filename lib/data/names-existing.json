@@ -266,38 +266,38 @@
  },
  "Bleib am Ball – egal was kommt!": {
   "nameDe": "Bleib am Ball – egal was kommt!",
-  "nameEn": null,
+  "nameEn": "Bigman",
   "nameEs": null
  },
  "Beckett – Die neunte Chance": {
   "nameDe": "Beckett – Die neunte Chance",
-  "nameEn": null,
-  "nameEs": null
+  "nameEn": "10 Lives",
+  "nameEs": "10 vidas"
  },
  "Die Schule der magischen Tiere 3": {
   "nameDe": "Die Schule der magischen Tiere 3",
-  "nameEn": null,
+  "nameEn": "School of Magical Animals 3",
   "nameEs": null
  },
  "Das Geheimnis der Perlimps": {
   "nameDe": "Das Geheimnis der Perlimps",
-  "nameEn": null,
+  "nameEn": "Perlimps",
   "nameEs": null
  },
  "Niko – Reise zu den Polarlichtern": {
   "nameDe": "Niko – Reise zu den Polarlichtern",
-  "nameEn": null,
+  "nameEn": "Niko: Beyond the Northern Lights",
   "nameEs": null
  },
  "Die Heinzels – Neue Mützen, Neue Mission": {
   "nameDe": "Die Heinzels – Neue Mützen, Neue Mission",
-  "nameEn": null,
+  "nameEn": "The Super Elfkins",
   "nameEs": null
  },
  "SpongeBob – Piraten Ahoi": {
   "nameDe": "SpongeBob – Piraten Ahoi",
-  "nameEn": null,
-  "nameEs": null
+  "nameEn": "The SpongeBob Movie: Search for SquarePants",
+  "nameEs": "Bob Esponja: Una aventura pirata"
  },
  "Bibi Blocksberg – Das große Hexentreffen": {
   "nameDe": "Bibi Blocksberg – Das große Hexentreffen",
@@ -316,27 +316,27 @@
  },
  "Charlie der Superhund": {
   "nameDe": "Charlie der Superhund",
-  "nameEn": null,
+  "nameEn": "Charlie the Wonderdog",
   "nameEs": null
  },
  "Die Schule des Mutes – Rule Breakers": {
   "nameDe": "Die Schule des Mutes – Rule Breakers",
-  "nameEn": null,
+  "nameEn": "Rule Breakers",
   "nameEs": null
  },
  "G.O.A.T. – Bock auf große Sprünge": {
   "nameDe": "G.O.A.T. – Bock auf große Sprünge",
-  "nameEn": null,
-  "nameEs": null
+  "nameEn": "GOAT",
+  "nameEs": "Como cabras"
  },
  "Das geheime Stockwerk": {
   "nameDe": "Das geheime Stockwerk",
-  "nameEn": null,
+  "nameEn": "The Secret Floor",
   "nameEs": null
  },
  "Mein Freund Barry": {
   "nameDe": "Mein Freund Barry",
-  "nameEn": null,
+  "nameEn": "Barry and Me",
   "nameEs": null
  },
  "Meine Freundin Conni – Abenteuer mit Kranich Klaus": {
@@ -346,12 +346,12 @@
  },
  "The Mandalorian & Grogu": {
   "nameDe": "The Mandalorian & Grogu",
-  "nameEn": null,
-  "nameEs": null
+  "nameEn": "Star Wars: The Mandalorian and Grogu",
+  "nameEs": "The Mandalorian y Grogu"
  },
  "Marsupilami": {
   "nameDe": "Marsupilami",
-  "nameEn": null,
+  "nameEn": "Marsupilami",
   "nameEs": null
  },
  "Emil und die Detektive": {
@@ -366,7 +366,7 @@
  },
  "Yo Gabba Gabba!Land": {
   "nameDe": "Yo Gabba Gabba!Land",
-  "nameEn": null,
+  "nameEn": "Yo Gabba GabbaLand!",
   "nameEs": null
  },
  "Unicorn Island": {
@@ -376,7 +376,7 @@
  },
  "Dr. Seuss: Horton! Staffel 2": {
   "nameDe": "Dr. Seuss: Horton! Staffel 2",
-  "nameEn": null,
+  "nameEn": "Dr. Seuss's Horton!",
   "nameEs": null
  }
 }
