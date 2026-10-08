@@ -15,7 +15,7 @@ interface Props {
 }
 
 const PROPERTIES = {
-  emotional: ["Sehr ängstlich", "Leicht überfordert", "Weint leicht", "Kann Spannung gut halten", "Hat Albträume", "Braucht lange zur Verarbeitung"],
+  emotional: ["Sehr ängstlich", "Leicht überfordert", "Weint leicht", "Kann Spannungen nicht gut halten", "Hat Albträume", "Braucht lange zur Verarbeitung"],
   sensorisch: ["Laute Geräusche", "Schnelle Bilder", "Dunkle Szenen", "Jump-Scares"],
   kognitiv: ["Kann Gut/Böse nicht trennen", "Angst vor Tieren in Gefahr", "Abstrakte Konzepte schwierig"],
   sozial: ["Mobbing/Ausgrenzung", "Fantasy-Szenen verwirren"],
