@@ -95,7 +95,7 @@
   "nameEs": "Toy Story 3"
  },
  "Toy Story 4": {
-  "nameDe": "Toy Story 4",
+  "nameDe": "A Toy Story: Alles hört auf kein Kommando",
   "nameEn": "Toy Story 4",
   "nameEs": "Toy Story 4"
  },
@@ -125,12 +125,12 @@
   "nameEs": "Cars 3"
  },
  "Sing": {
-  "nameDe": "Sing – Die Show deines Lebens",
+  "nameDe": "Sing",
   "nameEn": "Sing",
   "nameEs": "Sing: ¡Ven y canta!"
  },
  "Sing 2": {
-  "nameDe": "Sing – Die Show deines Lebens 2",
+  "nameDe": "Sing – Die Show deines Lebens",
   "nameEn": "Sing 2",
   "nameEs": "Sing 2: ¡Ven y vuelve a cantar!"
  },
@@ -269,8 +269,8 @@
   "nameEn": "Bigman",
   "nameEs": null
  },
- "Beckett – Die neunte Chance": {
-  "nameDe": "Beckett – Die neunte Chance",
+ "Alles für die Katz": {
+  "nameDe": "Alles für die Katz",
   "nameEn": "10 Lives",
   "nameEs": "10 vidas"
  },
@@ -295,7 +295,7 @@
   "nameEs": null
  },
  "SpongeBob – Piraten Ahoi": {
-  "nameDe": "SpongeBob – Piraten Ahoi",
+  "nameDe": "SpongeBob Schwammkopf: Piraten Ahoi!",
   "nameEn": "The SpongeBob Movie: Search for SquarePants",
   "nameEs": "Bob Esponja: Una aventura pirata"
  },

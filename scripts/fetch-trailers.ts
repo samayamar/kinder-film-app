@@ -7,7 +7,7 @@ import path from 'path';
 // und trägt sie als unverifiziert ein. Standard ist ein Trockenlauf, geschrieben wird nur mit --write.
 // Mit --replace-broken werden auch vorhandene IDs geprüft: Ist das Video nicht abrufbar/nicht einbettbar oder
 // sein Titel enthält weder "trailer" noch "teaser", wird es nur dann ersetzt, wenn ein neuer Trailer gefunden wird.
-// Aufruf: npx tsx --env-file=.env.local scripts/fetch-trailers.ts [--write] [--replace-broken] [--limit=20] [--only=frozen]
+// Aufruf: npx tsx --env-file=.env.local scripts/fetch-trailers.ts [--write] [--replace-broken] [--limit=20] [--only=frozen] [--exclude="Name 1,Name 2"]
 // Benötigt TMDB_API_KEY (v3-Key oder v4 "API Read Access Token") in .env.local.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -15,6 +15,12 @@ const tmdbKey = process.env.TMDB_API_KEY;
 const write = process.argv.includes('--write');
 const replaceBroken = process.argv.includes('--replace-broken');
 const limit = Number(process.argv.find((a) => a.startsWith('--limit='))?.split('=')[1] ?? 0);
+const exclude = new Set(
+  (process.argv.find((a) => a.startsWith('--exclude='))?.slice('--exclude='.length) ?? '')
+    .split(',')
+    .map((n) => n.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, ' ').trim())
+    .filter(Boolean)
+);
 const only = process.argv.find((a) => a.startsWith('--only='))?.split('=')[1]?.toLowerCase();
 
 if (!supabaseUrl || !supabaseKey) {
@@ -109,14 +115,17 @@ async function findTmdb(row: Row, kind: 'movie' | 'tv') {
   for (const name of names) {
     const data = await tmdb(`/search/${kind}`, { query: name, language: 'de-DE' });
     for (const r of data.results ?? []) seen.set(r.id, r);
-    const exact = [...seen.values()].filter((r) => {
-      const y = yearOf(r, kind);
-      const titleOk = [r.title, r.name, r.original_title, r.original_name].some((t) => t && wanted.has(norm(t)));
-      return titleOk && (row.film_year === null || (y !== null && Math.abs(y - row.film_year) <= 1));
-    });
-    if (exact.length > 0) {
-      exact.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
-      return { match: exact[0], candidates: exact };
+    // erst ±1 Jahr, dann ±2 (z.B. Produktionsjahr und Kinostart weichen oft ab), jeweils bei exakt passendem Titel
+    for (const tolerance of [1, 2]) {
+      const exact = [...seen.values()].filter((r) => {
+        const y = yearOf(r, kind);
+        const titleOk = [r.title, r.name, r.original_title, r.original_name].some((t) => t && wanted.has(norm(t)));
+        return titleOk && (row.film_year === null || (y !== null && Math.abs(y - row.film_year) <= tolerance));
+      });
+      if (exact.length > 0) {
+        exact.sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+        return { match: exact[0], candidates: exact };
+      }
     }
   }
   const candidates = [...seen.values()]
@@ -179,6 +188,7 @@ async function run() {
 
   let rows = (data ?? []) as Row[];
   if (only) rows = rows.filter((r) => norm(r.film_name).includes(norm(only)));
+  if (exclude.size > 0) rows = rows.filter((r) => !exclude.has(norm(r.film_name)));
 
   if (replaceBroken) {
     const existing = rows.filter((r) => r.youtube_id);
