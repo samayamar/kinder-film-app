@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { adminFetch } from '@/lib/adminFetch';
 
 interface Trailer {
@@ -23,6 +23,7 @@ export default function TrailerReportPage() {
   const [editValue, setEditValue] = useState('');
   const [saving, setSaving]       = useState(false);
   const [saveMsg, setSaveMsg]     = useState('');
+  const [previewId, setPreviewId] = useState<number | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -49,39 +50,51 @@ export default function TrailerReportPage() {
     setEditValue('');
   };
 
-  const handleSave = async (id: number) => {
+  const saveTrailer = async (id: number, youtubeId: string | null, verified: boolean) => {
     setSaving(true);
     setSaveMsg('');
-    const newYoutubeId  = editValue.trim() || null;
-    const newVerified   = !!editValue.trim();
 
     try {
       const res = await adminFetch('/api/admin/update-trailer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, youtube_id: newYoutubeId, verified: newVerified }),
+        body: JSON.stringify({ id, youtube_id: youtubeId, verified }),
       });
 
       if (res.ok) {
         setTrailers(prev =>
           prev.map(t =>
             t.id === id
-              ? { ...t, youtube_id: newYoutubeId, verified: newVerified }
+              ? { ...t, youtube_id: youtubeId, verified }
               : t
           )
         );
         setSaveMsg('✅ Gespeichert');
         setEditId(null);
         setEditValue('');
-      } else {
-        const data = await res.json();
-        setSaveMsg(`❌ ${data.error ?? 'Fehler'}`);
+        return true;
       }
+      const data = await res.json();
+      setSaveMsg(`❌ ${data.error ?? 'Fehler'}`);
     } catch {
       setSaveMsg('❌ Verbindungsfehler');
+    } finally {
+      setSaving(false);
     }
+    return false;
+  };
 
-    setSaving(false);
+  const handleSave = (id: number) => {
+    const newYoutubeId = editValue.trim() || null;
+    return saveTrailer(id, newYoutubeId, !!newYoutubeId);
+  };
+
+  // Vorschau: "Passt" bestätigt die ID, "Falsch" entfernt sie, damit sie neu gesucht werden kann
+  const handleApprove = async (t: Trailer) => {
+    if (await saveTrailer(t.id, t.youtube_id, true)) setPreviewId(null);
+  };
+  const handleReject = async (t: Trailer) => {
+    if (await saveTrailer(t.id, null, false)) setPreviewId(null);
   };
 
   const filtered = trailers
@@ -173,7 +186,8 @@ export default function TrailerReportPage() {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {filtered.map(t => (
-              <tr key={t.id} className="hover:bg-gray-50">
+              <Fragment key={t.id}>
+              <tr className="hover:bg-gray-50">
                 <td className="px-4 py-3 font-medium text-gray-800">{t.film_name}</td>
                 <td className="px-4 py-3 text-gray-500">{t.film_year ?? '—'}</td>
                 <td className="px-4 py-3">
@@ -231,15 +245,62 @@ export default function TrailerReportPage() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => handleEdit(t)}
-                      className="text-brand hover:text-brand-dark text-xs font-medium"
-                    >
-                      ✏️ Edit
-                    </button>
+                    <div className="flex gap-3 justify-center">
+                      {t.youtube_id && (
+                        <button
+                          onClick={() => setPreviewId(previewId === t.id ? null : t.id)}
+                          className="text-brand hover:text-brand-dark text-xs font-medium"
+                        >
+                          {previewId === t.id ? '✕ Schließen' : '▶ Ansehen'}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleEdit(t)}
+                        className="text-gray-500 hover:text-gray-700 text-xs font-medium"
+                      >
+                        ✏️ Edit
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
+              {previewId === t.id && t.youtube_id && (
+                <tr className="bg-gray-50">
+                  <td colSpan={7} className="px-4 py-4">
+                    <div className="flex flex-col md:flex-row gap-4 items-start">
+                      <iframe
+                        className="w-full md:w-[480px] aspect-video rounded-lg border border-gray-200"
+                        src={`https://www.youtube-nocookie.com/embed/${t.youtube_id}`}
+                        allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={`Trailer ${t.film_name}`}
+                      />
+                      <div className="space-y-2">
+                        <p className="text-sm text-gray-700">
+                          Ist das der offizielle Trailer zu <strong>{t.film_name}</strong>{t.film_year ? ` (${t.film_year})` : ''}?
+                        </p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleApprove(t)}
+                            disabled={saving}
+                            className="bg-brand text-white px-4 py-2 rounded text-sm font-medium hover:bg-brand-dark disabled:opacity-50"
+                          >
+                            ✓ Passt
+                          </button>
+                          <button
+                            onClick={() => handleReject(t)}
+                            disabled={saving}
+                            className="bg-bad-text text-white px-4 py-2 rounded text-sm font-medium hover:bg-bad-dark disabled:opacity-50"
+                          >
+                            ✗ Falsch, entfernen
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              )}
+              </Fragment>
             ))}
           </tbody>
         </table>

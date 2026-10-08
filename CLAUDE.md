@@ -32,6 +32,8 @@ Required env vars (`.env.local`, gitignored; `.env.example` only lists the Anthr
 
 **Trailers**: `/api/trailer` resolves YouTube IDs from Supabase `trailers` in three passes (name+year, name as movie, name as series). `lib/data/trailers.json` is the seed data for that table, loaded with `scripts/migrate-trailers.ts`. Entries with `youtubeId: "pending"` become `null` and are meant to be filled in via the admin trailer report.
 
+`scripts/fetch-trailers.ts` fills missing YouTube IDs from TMDB (needs `TMDB_API_KEY` in `.env.local`): it matches by title and year, prefers German then English official trailers, checks each video with YouTube oEmbed (exists and embeddable), and saves it as `verified = false`. It is a dry run unless `--write` is given; `--replace-broken` also audits existing IDs and replaces dead or non-trailer videos. `/admin/trailer-report` has an inline preview with approve/reject for review.
+
 **Other API routes**: `/api/search-film` uses the `@anthropic-ai/sdk` client directly (the analyze route uses raw `fetch` instead); `/api/streaming` returns static werstreamt.es/kino.de search links and a hard-coded provider list, with no real availability lookup; `/api/feedback` inserts into `feedback`.
 
 **Client state**: saved analyses/favorites live only in the browser (`localStorage`, key `filmabend-kids-analyses`, via `lib/useAnalysisStorage.ts`) and are addressed by array index, not by ID. There are no user accounts.
