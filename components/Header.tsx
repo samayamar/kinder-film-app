@@ -14,7 +14,7 @@ export default function Header({ showNewAnalysisLink, onNewAnalysis }: Props) {
       <div className="max-w-3xl mx-auto px-4 py-4">
         {/* TITEL OBEN LINKS */}
         <h1 className="text-4xl font-bold text-brand mb-2">🎬 Filmabend Kids</h1>
-        <p className="text-gray-600 text-sm mb-4">Sichere Filmanalyse für empfindliche Kinder</p>
+        <p className="text-gray-600 text-sm mb-4">Filmanalyse für Kinder</p>
 
         {/* BUTTONS + WIE FUNKTIONIERT ES RECHTS */}
         <div className="flex justify-between items-start">

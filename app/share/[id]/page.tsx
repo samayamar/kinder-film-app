@@ -29,7 +29,7 @@ export default async function SharedResultPage({ params }: Params) {
           <Link href="/" className="text-2xl font-bold text-brand">
             🎬 Filmabend Kids
           </Link>
-          <p className="text-sm text-gray-600">Geteilte Filmanalyse für empfindliche Kinder</p>
+          <p className="text-sm text-gray-600">Geteilte Filmanalyse für Kinder</p>
         </header>
 
         <ResultView result={row.result as AnalysisResult} />

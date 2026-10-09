@@ -94,7 +94,7 @@ export default function FilmNameInput({ value, onChange, onSelectYear }: Props) 
         onKeyDown={handleKeyDown}
         onFocus={() => suggestions.length > 0 && setOpen(true)}
         onBlur={() => setOpen(false)}
-        placeholder="z.B. Frozen, Dumbo..."
+        placeholder="z.B. Cars, Minions..."
         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand outline-none"
       />
       {open && (

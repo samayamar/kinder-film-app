@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Kinder-Film-Analyzer",
-  description: "Filmanalyse für empfindliche Kinder — Altersgerecht & Praktisch",
+  description: "Filmanalyse für Kinder — Altersgerecht & Praktisch",
 };
 
 export default function RootLayout({
