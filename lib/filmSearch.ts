@@ -1,58 +1,14 @@
 import { supabase } from '@/lib/supabase';
 
-export interface FilmSuggestion {
-  name: string;
-  year: number | null;
-  /** Namen in anderen Sprachen, die sich vom Haupttitel unterscheiden (gleiche Namen sind zusammengefasst) */
-  alt: { name: string; langs: string[] }[];
-}
+import { FilmRow, FilmSuggestion, IndexedFilm, normalizeSearch, resolveFilm, toIndexed } from '@/lib/filmMatch';
 
-interface FilmRow {
-  film_name: string;
-  film_year: number | null;
-  name_de: string | null;
-  name_en: string | null;
-  name_es: string | null;
-}
-
-interface IndexedFilm {
-  suggestion: FilmSuggestion;
-  haystack: string[];
-}
+export type { FilmSuggestion };
 
 export const MIN_QUERY_LENGTH = 3;
 const CACHE_MS = 5 * 60 * 1000;
 const MAX_RESULTS = 8;
 
 let cache: { at: number; films: IndexedFilm[] } | null = null;
-
-/** Kleinschreibung, ohne Akzente (Increíbles → increibles), ß → ss */
-export function normalizeSearch(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/ß/g, 'ss')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function toIndexed(row: FilmRow): IndexedFilm {
-  const main = row.film_name;
-  const alt = new Map<string, { name: string; langs: string[] }>();
-  for (const [lang, name] of [['DE', row.name_de], ['EN', row.name_en], ['ES', row.name_es]] as const) {
-    if (!name || normalizeSearch(name) === normalizeSearch(main)) continue;
-    const key = normalizeSearch(name);
-    const entry = alt.get(key) ?? { name, langs: [] };
-    entry.langs.push(lang);
-    alt.set(key, entry);
-  }
-  const suggestion: FilmSuggestion = { name: main, year: row.film_year, alt: [...alt.values()] };
-  return {
-    suggestion,
-    haystack: [main, ...suggestion.alt.map((a) => a.name)].map(normalizeSearch),
-  };
-}
 
 async function loadFilms(): Promise<IndexedFilm[]> {
   if (cache && Date.now() - cache.at < CACHE_MS) return cache.films;
@@ -106,4 +62,9 @@ export async function searchFilms(query: string): Promise<FilmSuggestion[]> {
     )
     .slice(0, MAX_RESULTS)
     .map((x) => x.f.suggestion);
+}
+
+/** Kanonischer Name und Jahr eines Films laut Filmliste, damit Cache und Analyse für alle Schreibweisen übereinstimmen. */
+export async function resolveFilmByName(name: string, year: number | null) {
+  return resolveFilm(await loadFilms(), name, year);
 }

@@ -23,7 +23,7 @@ Required env vars (`.env.local`, gitignored; `.env.example` only lists the Anthr
 ## Architecture
 
 **Analysis flow** (`app/api/analyze/route.ts`, the core of the app):
-1. Look up a cached result in Supabase `analyses` (key: normalized lowercase film name + age + year-or-null). Skipped entirely when the request has `eigenschaften` (custom child traits), and such results are also never cached.
+1. Resolve the typed name against the film list (`lib/filmMatch.ts`: exact name in any language, unique match only; with a year the year must match too) so "dumbo", "Dumbo" and the German/Spanish title map to one canonical name and year; ambiguous or unknown input stays as typed. Then look up a cached result in Supabase `analyses` (key: canonical lowercase film name + age + year-or-null). Skipped entirely when the request has `eigenschaften` (custom child traits), and such results are also never cached.
 2. Fetch trailer info by calling `/api/trailer` over HTTP on its own origin (only used for logging).
 3. Call the Anthropic Messages API with plain `fetch` (model `claude-sonnet-4-6`, system prompt defines the JSON schema: five 1–10 risk scores, `gesamtscore`, `ampel`, `kritische_szenen`, ...) and `JSON.parse` the reply. Model output is not validated against the schema.
 4. Insert into `analyses`, then write a row to `search_log`. Cache and log failures are swallowed on purpose ("unkritisch"); only the Claude call failing returns a 500. When the Claude call fails the user only sees "Analyse fehlgeschlagen", but the Vercel function log has the cause: `Claude API Fehler: HTTP <status> – <body>` (401 = missing/invalid `ANTHROPIC_API_KEY`, 400 = often no credit, 429/529 = rate limit/overload) or `ANTHROPIC_API_KEY ist nicht gesetzt`. The route sets `maxDuration = 60` because analyses take 25–60 s.
@@ -33,6 +33,8 @@ Required env vars (`.env.local`, gitignored; `.env.example` only lists the Anthr
 **Trailers**: `/api/trailer` resolves YouTube IDs from Supabase `trailers` in three passes (name+year, name as movie, name as series). `lib/data/trailers.json` is the seed data for that table, loaded with `scripts/migrate-trailers.ts`. Entries with `youtubeId: "pending"` become `null` and are meant to be filled in via the admin trailer report.
 
 `scripts/fetch-trailers.ts` fills missing YouTube IDs from TMDB (needs `TMDB_API_KEY` in `.env.local`): it matches by title and year, prefers German then English official trailers, checks each video with YouTube oEmbed (exists and embeddable), and saves it as `verified = false`. It is a dry run unless `--write` is given; `--replace-broken` also audits existing IDs and replaces dead or non-trailer videos. `/admin/trailer-report` has an inline preview with approve/reject for review.
+
+`scripts/dedupe-analyses.ts` brings old `analyses` rows onto the canonical name/year (rename, or delete when the canonical row already exists; dry run unless `--write`).
 
 `scripts/import-freetext-films.ts` adds films users analyzed by free text (from `search_log`/`shared_results`) that are not in `trailers` yet: it resolves each via TMDB (German/English/Spanish titles, year), skips short forms of existing titles and obscure same-name matches when no year was given, and is a dry run unless `--write` is passed. Run `fetch-trailers.ts --write --only=<title>` afterwards to get the trailer.
 

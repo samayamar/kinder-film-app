@@ -1,18 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { saveResult } from '@/lib/results';
+import { resolveFilmByName } from '@/lib/filmSearch';
 
 // Eine Analyse dauert 25–60 s; ohne Angabe gilt auf Vercel eine deutlich kürzere Standardgrenze
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { age, filmName, filmYear, eigenschaften } = body;
+  const { age, filmName: typedName, filmYear: typedYear, eigenschaften } = body;
 
-  if (!age || !filmName) {
+  if (!age || !typedName) {
     return NextResponse.json({ error: 'Alter und Filmname erforderlich' }, { status: 400 });
   }
 
+  // Filmname und Jahr laut Filmliste vereinheitlichen: "dumbo" und "Dumbo (1941)" sind derselbe Cache-Eintrag.
+  // Nicht eindeutige oder unbekannte Eingaben bleiben, wie sie sind.
+  let filmName: string = typedName;
+  let filmYear: number | null = typedYear ?? null;
+  try {
+    const resolved = await resolveFilmByName(typedName, filmYear);
+    if (resolved) {
+      filmName = resolved.name;
+      filmYear = resolved.year;
+    }
+  } catch (err) {
+    console.error('Filmliste nicht abrufbar, nutze Eingabe unverändert (unkritisch):', err);
+  }
   const filmNameNormalized = filmName.toLowerCase().trim();
 
   // ── 1. CACHE CHECK (nur ohne Eigenschaften) ─────────────────
@@ -38,7 +52,7 @@ export async function POST(req: NextRequest) {
         console.log(`✅ Cache Hit: ${filmName} (${age}J)`);
 
         // Trotzdem loggen (found_in_db: true)
-        await logSearch({ filmName, filmYear, age, foundInDb: true });
+        await logSearch({ filmName: typedName, filmYear: typedYear ?? undefined, age, foundInDb: true });
 
         const shareId = await saveResult({ result: cached.result, filmName, filmYear, age });
         return NextResponse.json({ ...cached.result, shareId });
@@ -158,7 +172,7 @@ Ampel: "🟢 Sehr gut geeignet" | "🟡 Geeignet mit Begleitung" | "🟠 Mit Vor
   }
 
   // ── 5. SEARCH LOG ────────────────────────────────────────────
-  await logSearch({ filmName, filmYear, age, foundInDb: false, youtubeId });
+  await logSearch({ filmName: typedName, filmYear: typedYear ?? undefined, age, foundInDb: false, youtubeId });
 
   // ── 6. ERGEBNIS FÜR SHARE-LINK SPEICHERN (auch mit Eigenschaften) ──
   const shareId = await saveResult({ result, filmName, filmYear, age, eigenschaften });
