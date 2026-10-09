@@ -22,6 +22,12 @@ export default function AdminPage() {
           <div className="font-semibold text-gray-800">Analytics</div>
           <div className="text-sm text-gray-500 mt-1">Top-Filme und Altersgruppen</div>
         </a>
+        <a href="/admin/health"
+          className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md transition">
+          <div className="text-2xl mb-2">🩺</div>
+          <div className="font-semibold text-gray-800">Systemcheck</div>
+          <div className="text-sm text-gray-500 mt-1">Claude-API, Datenbank und Umgebungsvariablen prüfen</div>
+        </a>
       </div>
     </div>
   );
