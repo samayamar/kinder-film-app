@@ -31,19 +31,19 @@ function getRiskLabel(score: number): string {
 
 export function getGesamtColor(pct: number): string {
   if (pct <= 40) return 'text-bad-text';
-  if (pct <= 80) return 'text-caution-text';
+  if (pct < 80) return 'text-caution-text';
   return 'text-good-text';
 }
 
 export function getGesamtLabel(pct: number): string {
   if (pct <= 40) return '🔴 Nicht geeignet';
-  if (pct <= 80) return '🟡 Mit Begleitung';
+  if (pct < 80) return '🟡 Mit Begleitung';
   return '🟢 Geeignet';
 }
 
 function getGesamtBarColor(pct: number): string {
   if (pct <= 40) return 'bg-bad';
-  if (pct <= 80) return 'bg-caution';
+  if (pct < 80) return 'bg-caution';
   return 'bg-good';
 }
 
