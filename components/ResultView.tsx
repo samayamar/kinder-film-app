@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import ScoresTable, { getGesamtColor, getGesamtLabel } from "@/components/ScoresTable";
 import RecommendationCard from "@/components/RecommendationCard";
+import AlternativeFilms from "@/components/AlternativeFilms";
 import CriticalScenesCard, { CriticalScene } from "@/components/CriticalScenesCard";
 
 export interface AnalysisResult {
@@ -46,7 +47,11 @@ export default function ResultView({ result, actions }: Props) {
 
       <ScoresTable scores={result.scores} gesamtscore={result.gesamtscore} />
 
-      <RecommendationCard empfehlung={result.empfehlung} elternhinweise={result.elternhinweise} />
+      <RecommendationCard
+        empfehlung={result.empfehlung}
+        elternhinweise={result.elternhinweise}
+        footer={pct < 70 ? <AlternativeFilms age={result.alter} filmName={result.filmName} /> : undefined}
+      />
 
       {result.kritische_szenen && result.kritische_szenen.length > 0 && (
         <CriticalScenesCard szenen={result.kritische_szenen} />

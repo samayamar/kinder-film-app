@@ -6,6 +6,7 @@ import { useAnalysisStorage } from "@/lib/useAnalysisStorage";
 import AnalysisForm from "@/components/AnalysisForm";
 import ResultView, { AnalysisResult } from "@/components/ResultView";
 import ShareButton from "@/components/ShareButton";
+import LoadingStatus from "@/components/LoadingStatus";
 
 interface TrailerData {
   youtubeVideoId: string | null;
@@ -154,7 +155,7 @@ export default function Home() {
                   `}</style>
                   <div className="clapboard">🎬</div>
                 </div>
-                <p className="text-gray-700 font-semibold mb-4">Analysiere "{filmName}"...</p>
+                <LoadingStatus filmName={filmName.trim()} age={age} />
                 <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                   <div className="bg-brand h-full animate-pulse rounded-full"></div>
                 </div>

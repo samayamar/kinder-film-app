@@ -9,7 +9,7 @@ import { FilmRow, normalizeSearch, resolveFilm, toIndexed } from '../lib/filmMat
 // damit Nutzer sie sofort sehen. Auswahl: erst die meistgesuchten Filme, dann nach TMDB-Bekanntheit (Stimmenzahl).
 // Bereits gecachte Kombinationen (Film + Alter + Jahr) werden übersprungen. Trockenlauf ist Standard.
 // Aufruf: npx tsx --env-file=.env.local scripts/prewarm-analyses.ts [--count=50] [--ages=5,6,7] [--concurrency=4]
-//                                                                    [--sample=5] [--max-fsk=6] [--skip="Film A|Film B"] [--write]
+//                                                                    [--sample=5] [--max-fsk=6] [--exclude-unknown-fsk] [--max-jobs=40] [--films="Film A|Film B"] [--skip="Film A|Film B"] [--write]
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const tmdbKey = process.env.TMDB_API_KEY;
@@ -22,6 +22,12 @@ const sample = Number(arg('sample') ?? 0);
 // Filme mit deutscher Freigabe ab dieser Altersstufe (laut TMDB) werden nicht analysiert (Zielgruppe 5–7 Jahre)
 const maxFsk = Number(arg('max-fsk') ?? 6);
 // Zusätzliche Ausschlüsse nach Filmname, getrennt mit |
+// Nur Filme mit bekannter deutscher Freigabe analysieren (für gezielte Suche nach besonders kindgerechten Filmen)
+const excludeUnknownFsk = process.argv.includes('--exclude-unknown-fsk');
+// Obergrenze für die Anzahl der Analysen in diesem Lauf (Kostenbremse)
+const maxJobs = Number(arg('max-jobs') ?? 0);
+// Nur diese Filme analysieren (Namen aus der Liste, getrennt mit |)
+const only = (arg('films') ?? '').split('|').map((n) => n.trim()).filter(Boolean);
 const skip = (arg('skip') ?? '').split('|').map((n) => n.trim()).filter(Boolean);
 
 // Preise laut README (Sonnet 4.6), nur für die Kostenanzeige
@@ -116,6 +122,7 @@ async function run() {
 
   const ranked: { r: ListRow; key: string; use: number; votes: number; tmdbId: number | null; skip?: boolean; fsk?: number | null }[] = rows
     .map((r) => ({ r, key: `${r.film_name}|${r.film_year}`, use: usage.get(`${r.film_name}|${r.film_year}`) ?? 0, votes: votes.get(`${r.film_name}|${r.film_year}`)?.votes ?? 0, tmdbId: votes.get(`${r.film_name}|${r.film_year}`)?.id ?? null }))
+    .filter((x) => only.length === 0 || only.some((n) => norm(n) === norm(x.r.film_name)))
     .sort((a, b) => b.use - a.use || b.votes - a.votes)
     .slice(0, count);
 
@@ -131,6 +138,9 @@ async function run() {
     x.fsk = fsk;
     if (fsk !== null && fsk > maxFsk) {
       excluded.push(`${x.r.film_name} (${x.r.film_year}): FSK ${fsk}`);
+      x.skip = true;
+    } else if (fsk === null && excludeUnknownFsk) {
+      excluded.push(`${x.r.film_name} (${x.r.film_year}): FSK unbekannt`);
       x.skip = true;
     }
     await sleep(80);
@@ -156,6 +166,11 @@ async function run() {
       const x = pool[Math.min(i * step, pool.length - 1)];
       return { film: x.r.film_name, year: x.r.film_year as number, age: ages.includes(rot[i % 3]) ? rot[i % 3] : ages[0] };
     }).filter((j) => !have.has(`${j.film.toLowerCase().trim()}|${j.year}|${j.age}`));
+  }
+
+  if (maxJobs > 0 && jobs.length > maxJobs) {
+    console.log(`✂️  ${jobs.length} Kandidaten, begrenzt auf die ersten ${maxJobs} (--max-jobs)`);
+    jobs = jobs.slice(0, maxJobs);
   }
 
   const estIn = jobs.length * 400;
