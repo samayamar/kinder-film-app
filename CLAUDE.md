@@ -38,6 +38,8 @@ Required env vars (`.env.local`, gitignored; `.env.example` only lists the Anthr
 
 `scripts/prewarm-analyses.ts` pre-fills the `analyses` cache for the best-known films (most searched, then TMDB vote count) and ages 5–7, skipping films with a German rating above `--max-fsk` (default 6, theatrical release per TMDB) and anything in `--skip`; dry run unless `--write`, `--sample=N` for a quality check, `--films="A|B"` to restrict to named films, `--exclude-unknown-fsk` and `--max-jobs=N` (cost cap), skips existing cache rows. About $0.02 per analysis. Node's `--env-file` parser merges a nameless line with the following variable, so keep `.env.local` free of lines without `=`.
 
+`scripts/import-films-by-title.ts --file=<json>` adds films from a JSON list of `{title, year}` (e.g. `lib/data/preschool-films.json`) to `trailers`: a title is only taken when TMDB has a film with exactly that title and a year within ±2 (otherwise it is reported), and the German/English/Spanish names come from TMDB. Dry run unless `--write`; follow up with `fetch-trailers.ts --write` and `prewarm-analyses.ts`.
+
 `scripts/dedupe-analyses.ts` brings old `analyses` rows onto the canonical name/year (rename, or delete when the canonical row already exists; dry run unless `--write`).
 
 `scripts/import-freetext-films.ts` adds films users analyzed by free text (from `search_log`/`shared_results`) that are not in `trailers` yet: it resolves each via TMDB (German/English/Spanish titles, year), skips short forms of existing titles and obscure same-name matches when no year was given, and is a dry run unless `--write` is passed. Run `fetch-trailers.ts --write --only=<title>` afterwards to get the trailer.
