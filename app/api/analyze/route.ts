@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { saveResult } from '@/lib/results';
 import { resolveFilmByName } from '@/lib/filmSearch';
+import { analyzeFilm } from '@/lib/analysis';
 
 // Eine Analyse dauert 25–60 s; ohne Angabe gilt auf Vercel eine deutlich kürzere Standardgrenze
 export const maxDuration = 60;
@@ -79,79 +80,11 @@ export async function POST(req: NextRequest) {
   }
 
   // ── 3. CLAUDE API ────────────────────────────────────────────
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error('ANTHROPIC_API_KEY ist nicht gesetzt (Vercel: Settings → Environment Variables, danach neu deployen)');
-    return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 });
-  }
-
   let result;
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY!,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2500,
-        system: `Du bist ein Kindermedien-Analytiker. Analysiere Filme für empfindliche Kinder.
-Antworte NUR mit validem JSON, ohne Markdown, ohne Erklärungen.
-
-JSON-Schema:
-{
-  "filmName": string,
-  "alter": number,
-  "scores": {
-    "visuelle_reize": number,
-    "ton_musik": number,
-    "emotionale_themen": number,
-    "spannung_dramaturgie": number,
-    "komplexitaet": number
-  },
-  "gesamtscore": number,
-  "ampel": string,
-  "begruendung": string,
-  "empfehlung": string,
-  "elternhinweise": string[],
-  "kritische_szenen": [
-    {
-      "titel": string,
-      "minute": string,
-      "was_passiert": string,
-      "warum_kritisch": string,
-      "ueberspringen": "ja" | "nein" | "optional"
-    }
-  ]
-}
-
-Scores: 1 = kein Risiko, 10 = stark belastend
-Gesamtscore: 1 = ungeeignet, 10 = ideal geeignet
-Ampel: "🟢 Sehr gut geeignet" | "🟡 Geeignet mit Begleitung" | "🟠 Mit Vorsicht" | "🔴 Nicht empfohlen"`,
-        messages: [
-          {
-            role: 'user',
-            content: `Analysiere "${filmName}"${filmYear ? ` (${filmYear})` : ''} für ein empfindliches Kind von ${age} Jahren.${eigenschaften?.length ? ` Besondere Eigenschaften: ${eigenschaften.join(', ')}.` : ''}`,
-          },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      // Fehlertext von Anthropic ins Log (401 = Key fehlt/ungültig, 400 = oft kein Guthaben, 429/529 = Limit/Überlastung)
-      const detail = await response.text().catch(() => '');
-      console.error(`Claude API Fehler: HTTP ${response.status} – ${detail.slice(0, 500)}`);
-      return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 });
-    }
-
-    const data = await response.json();
-    if (data.stop_reason === 'max_tokens') {
-      console.error('Claude-Antwort wurde bei max_tokens abgeschnitten, JSON vermutlich unvollständig');
-    }
-    result = parseAnalysis(data);
+    result = await analyzeFilm({ filmName, filmYear, age, eigenschaften });
   } catch (err) {
-    console.error('Claude-Antwort nicht auswertbar:', err);
+    console.error(err instanceof Error ? err.message : err);
     return NextResponse.json({ error: 'Analyse fehlgeschlagen' }, { status: 500 });
   }
 
@@ -182,26 +115,6 @@ Ampel: "🟢 Sehr gut geeignet" | "🟡 Geeignet mit Begleitung" | "🟠 Mit Vor
 
 // ── HELPER ────────────────────────────────────────────────────
 
-/** Liest das JSON aus der Claude-Antwort; toleriert Markdown-Zäune und Text drumherum. */
-function parseAnalysis(data: any) {
-  const text: string = (data.content ?? [])
-    .filter((b: any) => b.type === 'text')
-    .map((b: any) => b.text)
-    .join('');
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start === -1 || end <= start) throw new Error(`Kein JSON in der Antwort: ${text.slice(0, 200)}`);
-
-  const parsed = JSON.parse(text.slice(start, end + 1));
-  if (
-    typeof parsed.filmName !== 'string' ||
-    typeof parsed.gesamtscore !== 'number' ||
-    typeof parsed.scores !== 'object' || parsed.scores === null
-  ) {
-    throw new Error(`Antwort hat nicht das erwartete Schema: ${Object.keys(parsed).join(', ')}`);
-  }
-  return parsed;
-}
 async function logSearch({
   filmName, filmYear, age, foundInDb, youtubeId = null,
 }: {
