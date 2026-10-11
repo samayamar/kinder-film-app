@@ -14,12 +14,12 @@ interface Props {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-const PROPERTIES = {
-  emotional: ["Sehr ängstlich", "Leicht überfordert", "Weint leicht", "Kann Spannungen nicht gut halten", "Hat Albträume", "Braucht lange zur Verarbeitung"],
-  sensorisch: ["Laute Geräusche", "Schnelle Bilder", "Dunkle Szenen", "Jump-Scares"],
-  kognitiv: ["Kann Gut/Böse nicht trennen", "Angst vor Tieren in Gefahr", "Abstrakte Konzepte schwierig"],
-  sozial: ["Mobbing/Ausgrenzung", "Fantasy-Szenen verwirren"],
-};
+// Bewusst kurz gehalten: nur die Angaben, die die Bewertung am stärksten verändern (alles freiwillig)
+const PROPERTIES = [
+  { label: "Gefühle", items: ["Sehr ängstlich", "Hat Albträume", "Kann Spannungen nicht gut halten"] },
+  { label: "Sinne", items: ["Laute Geräusche", "Dunkle Szenen"] },
+  { label: "Themen", items: ["Kann Gut/Böse nicht trennen", "Angst vor Tieren in Gefahr", "Mobbing/Ausgrenzung"] },
+];
 
 export default function AnalysisForm({ age, setAge, filmName, setFilmName, setFilmYear, properties, setProperties, loading, onSubmit }: Props) {
   const toggleProperty = (prop: string) => {
@@ -42,10 +42,16 @@ export default function AnalysisForm({ age, setAge, filmName, setFilmName, setFi
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-3">Kind-Eigenschaften</label>
-          {Object.entries(PROPERTIES).map(([group, items]) => (
-            <div key={group} className="mb-4">
-              <p className="text-xs font-bold text-gray-600 uppercase mb-2">{group === "emotional" ? "Emotional" : group === "sensorisch" ? "Sensorisch" : group === "kognitiv" ? "Kognitiv" : "Sozial"}</p>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-sm font-semibold text-gray-700">Besonderheiten deines Kindes</span>
+            <span className="text-xs font-medium text-brand-dark bg-brand-soft px-2 py-0.5 rounded-full">optional</span>
+          </div>
+          <p className="text-xs text-gray-500 mb-3">
+            Nur ankreuzen, was auf dein Kind zutrifft. Ohne Angaben bekommst du bei vielen Filmen sofort ein Ergebnis.
+          </p>
+          {PROPERTIES.map(({ label, items }) => (
+            <div key={label} className="mb-4">
+              <p className="text-xs font-bold text-gray-600 uppercase mb-2">{label}</p>
               <div className="grid grid-cols-1 gap-2">
                 {items.map((prop) => (
                   <label key={prop} className="flex items-center gap-3 p-2 border border-gray-200 rounded cursor-pointer hover:bg-brand-soft">
