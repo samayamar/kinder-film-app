@@ -17,8 +17,8 @@ interface Props {
 // Bewusst kurz gehalten: nur die Angaben, die die Bewertung am stärksten verändern (alles freiwillig)
 const PROPERTIES = [
   { label: "Gefühle", items: ["Sehr ängstlich", "Hat Albträume", "Kann Spannungen nicht gut halten"] },
-  { label: "Sinne", items: ["Laute Geräusche", "Dunkle Szenen"] },
-  { label: "Themen", items: ["Kann Gut/Böse nicht trennen", "Angst vor Tieren in Gefahr", "Mobbing/Ausgrenzung"] },
+  { label: "Sinne", items: ["Erschrickt bei lauten Geräuschen", "Ängstigt sich bei dunklen Szenen"] },
+  { label: "Themen", items: ["Kann Gut/Böse nicht trennen", "Leidet mit, wenn Tiere in Gefahr sind", "Reagiert empfindlich auf Mobbing/Ausgrenzung"] },
 ];
 
 export default function AnalysisForm({ age, setAge, filmName, setFilmName, setFilmYear, properties, setProperties, loading, onSubmit }: Props) {
